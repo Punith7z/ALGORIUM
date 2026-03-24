@@ -1,0 +1,127 @@
+<% layout("/layouts/boilerplate.ejs" )%>
+    <section class="fx-faculty-section">
+
+        <div class="fx-header">
+            <h2 class="fx-title">Faculty Mentors</h2>
+            <p class="fx-subtitle">
+                Learn from experienced educators shaping the future of technology and innovation.
+            </p>
+        </div>
+
+        <div class="fx-grid">
+
+            <!-- Card 1 -->
+            <div class="fx-card">
+                <div class="fx-img-wrapper">
+                    <img src="/images/teacher3.png" alt="Faculty">
+                </div>
+                <div class="fx-content">
+                    <h3>Ai Tutor</h3>
+                    <span class="fx-domain">Artificial Intelligence</span>
+                    <p>
+                        Expertise in AI and ML with a focus on real-world applications and
+                        intelligent systems development.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="fx-card">
+                <div class="fx-img-wrapper">
+                    <img src="/images/teacher2.png" alt="Faculty">
+                </div>
+                <div class="fx-content">
+                    <h3>DS Tutor</h3>
+                    <span class="fx-domain">Data Science</span>
+                    <p>
+                        Specialized in data analytics, helping students turn raw data into
+                        meaningful insights and solutions.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="fx-card">
+                <div class="fx-img-wrapper">
+                    <img src="/images/teacher1.png" alt="Faculty">
+                </div>
+                <div class="fx-content">
+                    <h3>Dev Tutor</h3>
+                    <span class="fx-domain">Software Development</span>
+                    <p>
+                        Focused on scalable system design and modern development practices
+                        for real-world applications.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+    <SCript>
+        // Reveal animation on scroll
+        const fxCards = document.querySelectorAll(".fx-card");
+
+        window.addEventListener("scroll", () => {
+            fxCards.forEach(card => {
+                const top = card.getBoundingClientRect().top;
+                if (top < window.innerHeight - 50) {
+                    card.style.opacity = "1";
+                    card.style.transform = "translateY(0)";
+                }
+            });
+        });
+
+        // Initial state
+        fxCards.forEach(card => {
+            card.style.opacity = "0";
+            card.style.transform = "translateY(40px)";
+            card.style.transition = "all 0.6s ease";
+        });
+            
+        document.addEventListener('DOMContentLoaded', function () {
+
+  // ── Add heart icon to every card ──────────────────────────
+  document.querySelectorAll('.fx-card').forEach(card => {
+    const heart = document.createElement('span');
+    heart.classList.add('fx-heart');
+    heart.innerHTML = '🧡';
+    card.appendChild(heart);
+  });
+
+  // ── Staggered scroll reveal ───────────────────────────────
+  const fxCards = document.querySelectorAll('.fx-card');
+
+  fxCards.forEach((card, i) => {
+    card.style.opacity   = '0';
+    card.style.transform = 'translateY(48px)';
+    card.style.transition = `opacity 0.65s cubic-bezier(0.4,0,0.2,1) ${i * 0.15}s,
+                              transform 0.65s cubic-bezier(0.4,0,0.2,1) ${i * 0.15}s`;
+  });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity   = '1';
+        entry.target.style.transform = 'translateY(0)';
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  fxCards.forEach(card => observer.observe(card));
+
+  // ── Header fade in ────────────────────────────────────────
+  const header = document.querySelector('.fx-header');
+  if (header) {
+    header.style.opacity   = '0';
+    header.style.transform = 'translateY(-20px)';
+    header.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+    setTimeout(() => {
+      header.style.opacity   = '1';
+      header.style.transform = 'translateY(0)';
+    }, 100);
+  }
+
+});
+    </SCript>

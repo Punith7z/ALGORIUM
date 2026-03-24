@@ -1,0 +1,428 @@
+<% layout("/layouts/boilerplate.ejs" )%>
+
+    <body>
+
+        <!-- HEADER -->
+        <header>
+            <div class="logo">
+                <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
+                    <defs>
+                        <linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#ff6a00" />
+                            <stop offset="100%" stop-color="#ee0979" />
+                        </linearGradient>
+                    </defs>
+                    <polygon points="20,4 36,34 4,34" fill="url(#lg)" />
+                    <line x1="14" y1="28" x2="32" y2="16" stroke="white" stroke-width="2" stroke-linecap="round" />
+                    <circle cx="32" cy="16" r="3" fill="white" />
+                    <circle cx="26" cy="20" r="2" fill="white" opacity="0.7" />
+                </svg>
+                <span class="logo-text">Algorium</span>
+            </div>
+            <div class="progress-pill">
+                <span class="progress-label">Progress</span>
+                <div class="bar-wrap">
+                    <div class="bar-fill" id="barFill"></div>
+                </div>
+                <span class="bar-pct" id="barPct">0%</span>
+            </div>
+        </header>
+
+        <div class="body">
+
+            <!-- SIDEBAR -->
+            <aside class="sidebar">
+                <div class="sb-head">
+                    <div class="sb-title">📺 Playlist</div>
+                    <div class="sb-count" id="sbCount">0 videos</div>
+                </div>
+                <div class="search-wrap">
+                    <input class="search-input" id="searchInput" type="text" placeholder="Search videos…"
+                        oninput="filterVideos(this.value)" />
+                    <svg class="s-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                </div>
+                <div class="vlist" id="vlist"></div>
+            </aside>
+
+            <!-- MAIN -->
+            <div class="main">
+
+                <!-- RESUME BAR -->
+                <div class="resume-bar" id="resumeBar">
+                    <span class="resume-text" id="resumeText">▶ Resume from where you left off?</span>
+                    <button class="resume-btn" onclick="doResume()">Resume</button>
+                    <button class="resume-dismiss" onclick="dismissResume()">Start over</button>
+                </div>
+
+                <!-- PLAYER -->
+                <div class="player-box">
+                    <div id="ytPlayer"></div>
+                </div>
+
+                <!-- CONTROLS -->
+                <div class="controls">
+
+                    <!-- SEEK BAR -->
+                    <div class="seek-row">
+                        <span class="time-label" id="curTime">0:00</span>
+                        <div class="seek-wrap">
+                            <div class="seek-track">
+                                <div class="seek-fill" id="seekFill"></div>
+                            </div>
+                            <input type="range" id="seekBar" min="0" max="100" value="0" step="0.1"
+                                oninput="onSeekInput(this.value)" onchange="onSeekChange(this.value)" />
+                        </div>
+                        <span class="time-label right" id="durTime">0:00</span>
+                    </div>
+
+                    <!-- BUTTONS -->
+                    <div class="btn-row">
+
+                        <!-- Prev video -->
+                        <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5">
+                                <polyline points="15 18 9 12 15 6" />
+                            </svg>
+                            Prev
+                        </button>
+
+                        <!-- Skip back 10s -->
+                        <button class="skip-btn" onclick="skipSecs(-10)">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <polyline points="1 4 1 10 7 10" />
+                                <path d="M3.51 15a9 9 0 1 0 .49-4.7" />
+                            </svg>
+                            10s
+                        </button>
+
+                        <!-- Play / Pause -->
+                        <button class="play-btn" id="playBtn" onclick="togglePlay()">
+                            <svg id="playIcon" width="18" height="18" viewBox="0 0 24 24" fill="white">
+                                <polygon points="5 3 19 12 5 21 5 3" />
+                            </svg>
+                        </button>
+
+                        <!-- Skip forward 10s -->
+                        <button class="skip-btn" onclick="skipSecs(10)">
+                            10s
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <polyline points="23 4 23 10 17 10" />
+                                <path d="M20.49 15a9 9 0 1 1-.49-4.7" />
+                            </svg>
+                        </button>
+
+                        <!-- Now playing title -->
+                        <div class="now-playing-pill">
+                            <div class="np-dot"></div>
+                            <div class="np-title" id="npTitle">Select a video</div>
+                        </div>
+
+                        <!-- Volume -->
+                        <div class="vol-wrap">
+                            <svg class="vol-icon" id="volIcon" onclick="toggleMute()" width="18" height="18"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                                <path id="volWave" d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+                            </svg>
+                            <input class="vol-slider" type="range" id="volBar" min="0" max="100" value="100"
+                                oninput="setVolume(this.value)" />
+                        </div>
+
+                        <!-- Next video -->
+                        <button class="nav-btn" id="nextBtn" onclick="go(1)" disabled>
+                            Next
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5">
+                                <polyline points="9 18 15 12 9 6" />
+                            </svg>
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://www.youtube.com/iframe_api"></script>
+        <script>
+
+            // ============================================================
+            //  ✏️  YOUR PLAYLIST — just edit this array!
+            //
+            //  HOW TO GET A VIDEO ID:
+            //    YouTube URL → https://www.youtube.com/watch?v=dQw4w9WgXcQ
+            //    Video ID    →                                 ^^^^^^^^^^^
+            // ============================================================
+
+            const PLAYLIST = [
+                { id: "rfscVS0vtbw", title: "Learn Python – Full Course for Beginners" },
+                { id: "PkZNo7MFNFg", title: "JavaScript Full Course for Beginners" },
+                { id: "zOjov-2OZ0E", title: "HTML Full Course – Build a Website Tutorial" },
+                { id: "1Rs2ND1ryYc", title: "CSS Full Course – Flexbox and Grid Tutorial" },
+                { id: "Ke90Tje7VS0", title: "React JS – Full Course for Beginners" },
+                { id: "ExIfD9gz_cI", title: "Node.js and Express – Full Course" },
+                { id: "4deVCNJq3qc", title: "Git and GitHub Crash Course" },
+                { id: "8aGhZQkoFbQ", title: "MongoDB Full Tutorial" },
+                { id: "nu_pCVPKzTk", title: "JavaScript DOM Manipulation – Full Course" },
+                { id: "ysEN5RaKOlA", title: "REST API with Node.js Tutorial" },
+            ];
+
+            // ============================================================
+
+            const thumb = id => `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
+
+            let player = null;
+            let all = PLAYLIST;
+            let filtered = [...all];
+            let cur = -1;
+            let isPlaying = false;
+            let seekInterval = null;
+            let isSeeking = false;
+            let watched = new Set(JSON.parse(localStorage.getItem('alg_w') || '[]'));
+            let savedTimes = JSON.parse(localStorage.getItem('alg_t') || '{}');  // { videoId: seconds }
+            let pendingResume = 0;
+
+            function onYouTubeIframeAPIReady() {
+                player = new YT.Player('ytPlayer', {
+                    height: '100%', width: '100%', videoId: '',
+                    playerVars: { autoplay: 1, rel: 0, modestbranding: 1, controls: 0, disablekb: 0 },
+                    events: {
+                        onReady: onPlayerReady,
+                        onStateChange: onStateChange
+                    }
+                });
+            }
+
+            function onPlayerReady() {
+                render();
+                play(0);
+                startSeekUpdater();
+            }
+
+            function onStateChange(e) {
+                const S = YT.PlayerState;
+                if (e.data === S.PLAYING) {
+                    isPlaying = true;
+                    setIcon('pause');
+                } else if (e.data === S.PAUSED || e.data === S.BUFFERING) {
+                    isPlaying = false;
+                    setIcon('play');
+                } else if (e.data === S.ENDED) {
+                    saveTime(all[cur].id, 0); // reset saved time on finish
+                    watched.add(all[cur].id);
+                    saveWatched();
+                    go(1);
+                }
+            }
+
+            // ── Play video by index ──
+            function play(idx) {
+                if (idx < 0 || idx >= all.length) return;
+                // Save current position before switching
+                if (cur >= 0 && player && player.getCurrentTime) {
+                    saveTime(all[cur].id, player.getCurrentTime());
+                }
+
+                cur = idx;
+                const v = all[cur];
+
+                // Check if there's a saved position
+                pendingResume = savedTimes[v.id] || 0;
+                if (pendingResume > 5) {
+                    showResumeBar(v.title, pendingResume);
+                } else {
+                    pendingResume = 0;
+                    hideResumeBar();
+                }
+
+                if (player && player.loadVideoById) {
+                    player.loadVideoById(v.id);
+                }
+
+                document.getElementById('npTitle').textContent = v.title;
+                document.getElementById('prevBtn').disabled = cur === 0;
+                document.getElementById('nextBtn').disabled = cur === all.length - 1;
+
+                updateProgress();
+                render();
+                setTimeout(() => document.querySelector('.vitem.active')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 80);
+            }
+
+            function go(dir) { play(cur + dir); }
+
+            // ── Play / Pause ──
+            function togglePlay() {
+                if (!player) return;
+                if (isPlaying) { player.pauseVideo(); }
+                else { player.playVideo(); }
+            }
+
+            function setIcon(state) {
+                const ic = document.getElementById('playIcon');
+                if (state === 'pause') {
+                    ic.innerHTML = '<rect x="6" y="4" width="4" height="16" fill="white"/><rect x="14" y="4" width="4" height="16" fill="white"/>';
+                } else {
+                    ic.innerHTML = '<polygon points="5 3 19 12 5 21 5 3" fill="white"/>';
+                }
+            }
+
+            // ── Skip seconds ──
+            function skipSecs(s) {
+                if (!player || !player.getCurrentTime) return;
+                const t = player.getCurrentTime();
+                player.seekTo(Math.max(0, t + s), true);
+            }
+
+            // ── Seek bar ──
+            function startSeekUpdater() {
+                seekInterval = setInterval(() => {
+                    if (!player || !player.getCurrentTime || isSeeking) return;
+                    const cur2 = player.getCurrentTime() || 0;
+                    const dur = player.getDuration() || 0;
+                    if (dur > 0) {
+                        const pct = (cur2 / dur) * 100;
+                        document.getElementById('seekFill').style.width = pct + '%';
+                        document.getElementById('seekBar').value = pct;
+                        document.getElementById('curTime').textContent = fmt(cur2);
+                        document.getElementById('durTime').textContent = fmt(dur);
+                    }
+                    // Auto-save position every 5 seconds
+                    if (Math.round(cur2) % 5 === 0 && cur2 > 0 && all[cur]) {
+                        saveTime(all[cur].id, cur2);
+                    }
+                }, 500);
+            }
+
+            function onSeekInput(val) {
+                isSeeking = true;
+                document.getElementById('seekFill').style.width = val + '%';
+                if (player && player.getDuration) {
+                    document.getElementById('curTime').textContent = fmt((val / 100) * player.getDuration());
+                }
+            }
+
+            function onSeekChange(val) {
+                if (player && player.getDuration) {
+                    player.seekTo((val / 100) * player.getDuration(), true);
+                }
+                isSeeking = false;
+            }
+
+            // ── Volume ──
+            let muted = false;
+            function setVolume(val) {
+                if (player && player.setVolume) player.setVolume(Number(val));
+                muted = val == 0;
+                updateVolIcon();
+            }
+
+            function toggleMute() {
+                if (!player) return;
+                if (muted) {
+                    player.unMute();
+                    player.setVolume(100);
+                    document.getElementById('volBar').value = 100;
+                } else {
+                    player.mute();
+                    document.getElementById('volBar').value = 0;
+                }
+                muted = !muted;
+                updateVolIcon();
+            }
+
+            function updateVolIcon() {
+                const wave = document.getElementById('volWave');
+                wave.style.display = muted ? 'none' : '';
+            }
+
+            // ── Resume ──
+            function showResumeBar(title, secs) {
+                const bar = document.getElementById('resumeBar');
+                const txt = document.getElementById('resumeText');
+                txt.textContent = `Resume "${title.substring(0, 40)}…" from ${fmt(secs)}?`;
+                bar.classList.add('show');
+            }
+            function hideResumeBar() { document.getElementById('resumeBar').classList.remove('show'); }
+
+            function doResume() {
+                if (player && pendingResume > 0) {
+                    setTimeout(() => player.seekTo(pendingResume, true), 800);
+                }
+                pendingResume = 0;
+                hideResumeBar();
+            }
+
+            function dismissResume() {
+                if (cur >= 0) saveTime(all[cur].id, 0);
+                pendingResume = 0;
+                hideResumeBar();
+            }
+
+            // ── Save helpers ──
+            function saveTime(id, t) {
+                savedTimes[id] = t;
+                localStorage.setItem('alg_t', JSON.stringify(savedTimes));
+            }
+
+            function saveWatched() {
+                localStorage.setItem('alg_w', JSON.stringify([...watched]));
+            }
+
+            // ── Progress ──
+            function updateProgress() {
+                const pct = all.length ? Math.round((watched.size / all.length) * 100) : 0;
+                document.getElementById('barFill').style.width = pct + '%';
+                document.getElementById('barPct').textContent = pct + '%';
+            }
+
+            // ── Render sidebar ──
+            function render() {
+                document.getElementById('sbCount').textContent = `${filtered.length} video${filtered.length !== 1 ? 's' : ''}`;
+                document.getElementById('vlist').innerHTML = filtered.map((v, i) => {
+                    const gi = all.indexOf(v);
+                    const active = gi === cur;
+                    const isW = watched.has(v.id);
+                    const hasSaved = savedTimes[v.id] > 5;
+                    return `<div class="vitem ${active ? 'active' : ''}" onclick="play(${gi})">
+        <span class="vnum">${i + 1}</span>
+        <div class="thumb">
+          <img src="${thumb(v.id)}" loading="lazy"/>
+          ${active ? `<div class="now-overlay"><div class="pulse"><svg width="10" height="10" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>` : ''}
+        </div>
+        <div class="vmeta">
+          <div class="vtitle">${v.title}</div>
+          <div class="vbadge ${isW ? 'watched' : ''}">
+            ${isW ? '✓ Watched' : hasSaved ? '⏸ ' + fmt(savedTimes[v.id]) + ' saved' : ''}
+          </div>
+        </div>
+      </div>`;
+                }).join('');
+            }
+
+            function filterVideos(q) {
+                filtered = q ? all.filter(v => v.title.toLowerCase().includes(q.toLowerCase())) : [...all];
+                render();
+            }
+
+            // ── Format seconds → m:ss ──
+            function fmt(s) {
+                s = Math.floor(s || 0);
+                const m = Math.floor(s / 60);
+                const sec = String(s % 60).padStart(2, '0');
+                return `${m}:${sec}`;
+            }
+
+            // Save position on page unload
+            window.addEventListener('beforeunload', () => {
+                if (cur >= 0 && player && player.getCurrentTime) {
+                    saveTime(all[cur].id, player.getCurrentTime());
+                }
+            });
+        </script>
+    </body>

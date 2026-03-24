@@ -1,0 +1,153 @@
+<% layout("/layouts/boilerplate.ejs" )%>
+    <section class="explore-hero">
+
+        <h1>Discover the Technologies
+            <br>Shaping the Future
+        </h1>
+
+        <p>
+            Choose a learning path and begin mastering the
+            skills that define modern engineering.
+        </p>
+
+    </section>
+
+
+
+    <!-- AI ML SECTION -->
+
+    <section class="course-feature ai-section">
+
+        <div class="feature-text">
+
+            <h2>Artificial Intelligence & Machine Learning</h2>
+
+            <p>
+                Build intelligent systems capable of learning from data.
+                Explore neural networks, predictive models,
+                and modern AI technologies used by global companies.
+            </p>
+
+            <a href="/player" class="feature-btn">
+                Explore AI-ML →
+            </a>
+
+        </div>
+
+        <div class="feature-img">
+            <img src="/images/ai.png">
+        </div>
+
+    </section>
+
+
+
+    <!-- DATA SCIENCE -->
+
+    <section class="course-feature ds-section">
+
+        <div class="feature-img">
+            <img src="/images/ds.png">
+        </div>
+
+        <div class="feature-text">
+
+            <h2>Data Science</h2>
+
+            <p>
+                Transform raw data into meaningful insights.
+                Learn data analysis, visualization, and
+                machine learning pipelines used by modern industries.
+            </p>
+
+            <a href="/course/datascience" class="feature-btn">
+                Explore Data Science →
+            </a>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- DEVELOPMENT -->
+
+    <section class="course-feature dev-section">
+
+        <div class="feature-text">
+
+            <h2>Software Development</h2>
+
+            <p>
+                Design and build scalable applications,
+                modern web platforms, and robust software systems
+                used across the digital world.
+            </p>
+
+            <a href="/course/development" class="feature-btn">
+                Explore Development →
+            </a>
+
+        </div>
+
+        <div class="feature-img">
+            <img src="/images/dev.png">
+        </div>
+
+    </section>
+
+
+
+    <section class="explore-final">
+
+        <h2>Your Journey Starts Here</h2>
+
+        <p>
+            Select a course and begin building the
+            skills that shape tomorrow's technology.
+        </p>
+
+    </section>
+    <script>
+        /* explore.js — paste before </body> in your explore EJS */
+
+document.addEventListener('DOMContentLoaded', function () {
+
+  // ── Staggered reveal for course sections ─────────────────
+  const sections = document.querySelectorAll('.course-feature');
+  const finalCta = document.querySelector('.explore-final');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        entry.target.style.transition =
+          `opacity 0.75s cubic-bezier(0.4,0,0.2,1) ${entry.target.dataset.delay || 0}ms,
+           transform 0.75s cubic-bezier(0.4,0,0.2,1) ${entry.target.dataset.delay || 0}ms`;
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  // Stagger each section slightly
+  sections.forEach((section, i) => {
+    section.dataset.delay = i * 100;
+    observer.observe(section);
+  });
+
+  // Final CTA reveal
+  if (finalCta) observer.observe(finalCta);
+
+  // ── Button arrow slide on hover ───────────────────────────
+  document.querySelectorAll('.feature-btn').forEach(btn => {
+    const original = btn.textContent.trim();
+    btn.addEventListener('mouseenter', () => {
+      btn.style.letterSpacing = '0.04em';
+    });
+    btn.addEventListener('mouseleave', () => {
+      btn.style.letterSpacing = '0.01em';
+    });
+  });
+
+});
+    </script>

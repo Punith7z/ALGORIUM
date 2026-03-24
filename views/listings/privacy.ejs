@@ -1,0 +1,133 @@
+<% layout("/layouts/boilerplate.ejs" )%>
+
+
+    <body>
+
+        <div class="wrapper">
+
+            <!-- LOGO HEADER -->
+            <div class="policy-header">
+                <div class="policy-header-inner">
+
+                    <div>
+                        <h1>Privacy Policy</h1>
+                        <p class="subtitle">Algorium Platform</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HERO -->
+            <section class="hero">
+                <h2>Algorium Privacy & Data Protection</h2>
+                <p>Transparent. Secure. Built for future developers.</p>
+            </section>
+
+            <div class="container">
+
+                <!-- SIDEBAR -->
+                <aside class="sidebar">
+                    <ul>
+                        <li><a href="#intro">Introduction</a></li>
+                        <li><a href="#data">Data Collection</a></li>
+                        <li><a href="#usage">Data Usage</a></li>
+                        <li><a href="#sharing">Sharing</a></li>
+                        <li><a href="#cookies">Cookies</a></li>
+                        <li><a href="#security">Security</a></li>
+                        <li><a href="#rights">Rights</a></li>
+
+                    </ul>
+                </aside>
+
+                <!-- CONTENT -->
+                <main class="content">
+
+                    <section id="intro">
+                        <h3>1. Introduction</h3>
+                        <p>
+                            Algorium, powered by MVJ College of Engineering, ensures your data is handled
+                            with strict confidentiality and industry-grade safeguards.
+                        </p>
+                    </section>
+
+                    <section id="data">
+                        <h3>2. Data We Collect</h3>
+                        <ul>
+                            <li>Personal details (name, email)</li>
+                            <li>Learning progress & analytics</li>
+                            <li>Device and browser data</li>
+                        </ul>
+                    </section>
+
+                    <section id="usage">
+                        <h3>3. How We Use Data</h3>
+                        <p>We use your data to improve learning experience and platform quality.</p>
+                    </section>
+
+                    <section id="sharing">
+                        <h3>4. Data Sharing</h3>
+                        <p>No selling of personal data. Only trusted partners when required.</p>
+                    </section>
+
+                    <section id="cookies">
+                        <h3>5. Cookies</h3>
+                        <p>Used for performance, personalization, and analytics.</p>
+                    </section>
+
+                    <section id="security">
+                        <h3>6. Security</h3>
+                        <p>We use encryption, secure servers, and access controls.</p>
+                    </section>
+
+                    <section id="rights">
+                        <h3>7. Your Rights</h3>
+                        <ul>
+                            <li>Access and update your data</li>
+                            <li>Request deletion</li>
+                            <li>Withdraw consent</li>
+                        </ul>
+                    </section>
+
+                </main>
+
+            </div>
+
+        </div>
+
+        <script src="privacy.js"></script>
+    </body>
+
+    </html>
+    <script>
+        // Smooth scroll
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                document.querySelector(link.getAttribute('href'))
+                    .scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // Active highlight
+        const sections = document.querySelectorAll("section");
+        const navLinks = document.querySelectorAll(".sidebar a");
+
+        window.addEventListener("scroll", () => {
+            let current = "";
+
+            sections.forEach(section => {
+                if (scrollY >= section.offsetTop - 120) {
+                    current = section.id;
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove("active");
+                if (link.getAttribute("href") === "#" + current) {
+                    link.classList.add("active");
+                }
+            });
+        });
+
+    </script>
+
+    </body>
