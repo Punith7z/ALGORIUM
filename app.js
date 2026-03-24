@@ -1,4 +1,3 @@
-
 const express = require("express")
 const app = express()
 const path = require("path")
@@ -42,7 +41,207 @@ app.get("/explore", async (req, res) => {
 app.get("/privacy", async (req, res) => {
     res.render("listings/privacy.ejs");
 });
-app.get("/player", async (req, res) => {
-    res.render("listings/player.ejs");
+
+
+
+const axios = require('axios');
+
+app.get('/player', (req, res) => {
+  res.redirect('/player/0');
 });
 
+app.get('/player/:lessonId', async (req, res) => {
+  const API_KEY = "AIzaSyBJ1d7QOMG0bDc641nLskI8dfy8OOj3Vb4";
+  const PLAYLIST_ID = "PLaldQ9PzZd9qT0KsKJ7yCq70iFFP3MFJ5";
+
+  try {
+    const response = await axios.get(
+      "https://www.googleapis.com/youtube/v3/playlistItems",
+      {
+        params: {
+          part: "snippet",
+          maxResults: 50,
+          playlistId: PLAYLIST_ID,
+          key: API_KEY
+        }
+      }
+    );
+
+    const videos = response.data.items.map((item, index) => ({
+      id: index.toString(),
+      videoId: item.snippet.resourceId.videoId,
+      title: item.snippet.title,
+      description: item.snippet.description,
+      duration: "N/A",
+      views: "N/A",
+      completed: false,
+      globalIndex: index
+    }));
+
+    const currentIndex = parseInt(req.params.lessonId);
+
+    const sections = [{
+      id: "1",
+      title: "Playlist",
+      totalDuration: "",
+      videos
+    }];
+
+    res.render('listings/player.ejs', {
+      course: {
+        id: "1",
+        instructor: "YouTube",
+        instructorAvatar: "/images/rnlogo.png"
+      },
+      currentVideo: {
+        ...videos[currentIndex],
+        index: currentIndex
+      },
+      prevVideo: currentIndex > 0 ? videos[currentIndex - 1] : null,
+      nextVideo: currentIndex < videos.length - 1 ? videos[currentIndex + 1] : null,
+      sections,
+      completedCount: 0,
+      totalCount: videos.length,
+      progressPercent: Math.floor((currentIndex / videos.length) * 100),
+      activeSectionIndex: 0
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.send("Error loading playlist");
+  }
+});
+
+
+app.get('/player1', (req, res) => {
+  res.redirect('/player1/0');
+});
+
+app.get('/player1/:lessonId', async (req, res) => {
+  const API_KEY = "AIzaSyBJ1d7QOMG0bDc641nLskI8dfy8OOj3Vb4";
+  const PLAYLIST_ID = "PLu0W_9lII9agq5TrH9XLIKQvv0iaF2X3w";
+
+  try {
+    const response = await axios.get(
+      "https://www.googleapis.com/youtube/v3/playlistItems",
+      {
+        params: {
+          part: "snippet",
+          maxResults: 50,
+          playlistId: PLAYLIST_ID,
+          key: API_KEY
+        }
+      }
+    );
+
+    const videos = response.data.items.map((item, index) => ({
+      id: index.toString(),
+      videoId: item.snippet.resourceId.videoId,
+      title: item.snippet.title,
+      description: item.snippet.description,
+      duration: "N/A",
+      views: "N/A",
+      completed: false,
+      globalIndex: index
+    }));
+
+    const currentIndex = parseInt(req.params.lessonId);
+
+    const sections = [{
+      id: "1",
+      title: "Playlist",
+      totalDuration: "",
+      videos
+    }];
+
+    res.render('listings/player.ejs', {
+      course: {
+        id: "1",
+        instructor: "YouTube",
+        instructorAvatar: "/images/rnlogo.png"
+      },
+      currentVideo: {
+        ...videos[currentIndex],
+        index: currentIndex
+      },
+      prevVideo: currentIndex > 0 ? videos[currentIndex - 1] : null,
+      nextVideo: currentIndex < videos.length - 1 ? videos[currentIndex + 1] : null,
+      sections,
+      completedCount: 0,
+      totalCount: videos.length,
+      progressPercent: Math.floor((currentIndex / videos.length) * 100),
+      activeSectionIndex: 0
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.send("Error loading playlist");
+  }
+});
+
+
+app.get('/player2', (req, res) => {
+  res.redirect('/player2/0');
+});
+
+app.get('/player2/:lessonId', async (req, res) => {
+  const API_KEY = "AIzaSyBJ1d7QOMG0bDc641nLskI8dfy8OOj3Vb4";
+  const PLAYLIST_ID = "PLVHgQku8Z936EUyyl9WKYkvbJ5lJqTHPx";
+
+  try {
+    const response = await axios.get(
+      "https://www.googleapis.com/youtube/v3/playlistItems",
+      {
+        params: {
+          part: "snippet",
+          maxResults: 50,
+          playlistId: PLAYLIST_ID,
+          key: API_KEY
+        }
+      }
+    );
+
+    const videos = response.data.items.map((item, index) => ({
+      id: index.toString(),
+      videoId: item.snippet.resourceId.videoId,
+      title: item.snippet.title,
+      description: item.snippet.description,
+      duration: "N/A",
+      views: "N/A",
+      completed: false,
+      globalIndex: index
+    }));
+
+    const currentIndex = parseInt(req.params.lessonId);
+
+    const sections = [{
+      id: "1",
+      title: "Playlist",
+      totalDuration: "",
+      videos
+    }];
+
+    res.render('listings/player.ejs', {
+      course: {
+        id: "1",
+        instructor: "YouTube",
+        instructorAvatar: "/images/rnlogo.png"
+      },
+      currentVideo: {
+        ...videos[currentIndex],
+        index: currentIndex
+      },
+      prevVideo: currentIndex > 0 ? videos[currentIndex - 1] : null,
+      nextVideo: currentIndex < videos.length - 1 ? videos[currentIndex + 1] : null,
+      sections,
+      completedCount: 0,
+      totalCount: videos.length,
+      progressPercent: Math.floor((currentIndex / videos.length) * 100),
+      activeSectionIndex: 0
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.send("Error loading playlist");
+  }
+});

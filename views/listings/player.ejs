@@ -1,428 +1,273 @@
-<% layout("/layouts/boilerplate.ejs" )%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Algorium | Course Player</title>
+  <link rel="stylesheet" href="/style1.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <!-- Fallback for SF Pro -->
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet" />
+</head>
+<body>
 
-    <body>
-
-        <!-- HEADER -->
-        <header>
-            <div class="logo">
-                <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
-                    <defs>
-                        <linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#ff6a00" />
-                            <stop offset="100%" stop-color="#ee0979" />
-                        </linearGradient>
-                    </defs>
-                    <polygon points="20,4 36,34 4,34" fill="url(#lg)" />
-                    <line x1="14" y1="28" x2="32" y2="16" stroke="white" stroke-width="2" stroke-linecap="round" />
-                    <circle cx="32" cy="16" r="3" fill="white" />
-                    <circle cx="26" cy="20" r="2" fill="white" opacity="0.7" />
-                </svg>
-                <span class="logo-text">Algorium</span>
-            </div>
-            <div class="progress-pill">
-                <span class="progress-label">Progress</span>
-                <div class="bar-wrap">
-                    <div class="bar-fill" id="barFill"></div>
-                </div>
-                <span class="bar-pct" id="barPct">0%</span>
-            </div>
-        </header>
-
-        <div class="body">
-
-            <!-- SIDEBAR -->
-            <aside class="sidebar">
-                <div class="sb-head">
-                    <div class="sb-title">📺 Playlist</div>
-                    <div class="sb-count" id="sbCount">0 videos</div>
-                </div>
-                <div class="search-wrap">
-                    <input class="search-input" id="searchInput" type="text" placeholder="Search videos…"
-                        oninput="filterVideos(this.value)" />
-                    <svg class="s-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2">
-                        <circle cx="11" cy="11" r="8" />
-                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                    </svg>
-                </div>
-                <div class="vlist" id="vlist"></div>
-            </aside>
-
-            <!-- MAIN -->
-            <div class="main">
-
-                <!-- RESUME BAR -->
-                <div class="resume-bar" id="resumeBar">
-                    <span class="resume-text" id="resumeText">▶ Resume from where you left off?</span>
-                    <button class="resume-btn" onclick="doResume()">Resume</button>
-                    <button class="resume-dismiss" onclick="dismissResume()">Start over</button>
-                </div>
-
-                <!-- PLAYER -->
-                <div class="player-box">
-                    <div id="ytPlayer"></div>
-                </div>
-
-                <!-- CONTROLS -->
-                <div class="controls">
-
-                    <!-- SEEK BAR -->
-                    <div class="seek-row">
-                        <span class="time-label" id="curTime">0:00</span>
-                        <div class="seek-wrap">
-                            <div class="seek-track">
-                                <div class="seek-fill" id="seekFill"></div>
-                            </div>
-                            <input type="range" id="seekBar" min="0" max="100" value="0" step="0.1"
-                                oninput="onSeekInput(this.value)" onchange="onSeekChange(this.value)" />
-                        </div>
-                        <span class="time-label right" id="durTime">0:00</span>
-                    </div>
-
-                    <!-- BUTTONS -->
-                    <div class="btn-row">
-
-                        <!-- Prev video -->
-                        <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2.5">
-                                <polyline points="15 18 9 12 15 6" />
-                            </svg>
-                            Prev
-                        </button>
-
-                        <!-- Skip back 10s -->
-                        <button class="skip-btn" onclick="skipSecs(-10)">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <polyline points="1 4 1 10 7 10" />
-                                <path d="M3.51 15a9 9 0 1 0 .49-4.7" />
-                            </svg>
-                            10s
-                        </button>
-
-                        <!-- Play / Pause -->
-                        <button class="play-btn" id="playBtn" onclick="togglePlay()">
-                            <svg id="playIcon" width="18" height="18" viewBox="0 0 24 24" fill="white">
-                                <polygon points="5 3 19 12 5 21 5 3" />
-                            </svg>
-                        </button>
-
-                        <!-- Skip forward 10s -->
-                        <button class="skip-btn" onclick="skipSecs(10)">
-                            10s
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <polyline points="23 4 23 10 17 10" />
-                                <path d="M20.49 15a9 9 0 1 1-.49-4.7" />
-                            </svg>
-                        </button>
-
-                        <!-- Now playing title -->
-                        <div class="now-playing-pill">
-                            <div class="np-dot"></div>
-                            <div class="np-title" id="npTitle">Select a video</div>
-                        </div>
-
-                        <!-- Volume -->
-                        <div class="vol-wrap">
-                            <svg class="vol-icon" id="volIcon" onclick="toggleMute()" width="18" height="18"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-                                <path id="volWave" d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
-                            </svg>
-                            <input class="vol-slider" type="range" id="volBar" min="0" max="100" value="100"
-                                oninput="setVolume(this.value)" />
-                        </div>
-
-                        <!-- Next video -->
-                        <button class="nav-btn" id="nextBtn" onclick="go(1)" disabled>
-                            Next
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2.5">
-                                <polyline points="9 18 15 12 9 6" />
-                            </svg>
-                        </button>
-
-                    </div>
-                </div>
-            </div>
+  <!-- ═══════════════════════════════════════════════
+       NAVBAR
+  ═══════════════════════════════════════════════ -->
+  <nav class="navbar">
+    <div class="navbar-left">
+      <a href="/" class="logo-link">
+        <!-- Replace src with your actual logo path -->
+        <img src="/images/algo.png" alt="Algorium" class="navbar-logo" />
+      </a>
+    </div>
+    <div class="navbar-center">
+      <span class="course-title-nav"><%= course.title %></span>
+    </div>
+    <div class="navbar-right">
+      <div class="progress-pill">
+        <span class="progress-label"><%= completedCount %>/<%= totalCount %> completed</span>
+        <div class="progress-bar-mini">
+          <div class="progress-bar-fill" style="width: <%= progressPercent %>%"></div>
         </div>
+      </div>
+      <button class="btn-nav-action">My Courses</button>
+    </div>
+  </nav>
 
-        <script src="https://www.youtube.com/iframe_api"></script>
-        <script>
+  <!-- ═══════════════════════════════════════════════
+       MAIN LAYOUT
+  ═══════════════════════════════════════════════ -->
+  <main class="player-shell">
 
-            // ============================================================
-            //  ✏️  YOUR PLAYLIST — just edit this array!
-            //
-            //  HOW TO GET A VIDEO ID:
-            //    YouTube URL → https://www.youtube.com/watch?v=dQw4w9WgXcQ
-            //    Video ID    →                                 ^^^^^^^^^^^
-            // ============================================================
+    <!-- ── LEFT: VIDEO PLAYER COLUMN ─────────────── -->
+    <section class="player-main">
 
-            const PLAYLIST = [
-                { id: "rfscVS0vtbw", title: "Learn Python – Full Course for Beginners" },
-                { id: "PkZNo7MFNFg", title: "JavaScript Full Course for Beginners" },
-                { id: "zOjov-2OZ0E", title: "HTML Full Course – Build a Website Tutorial" },
-                { id: "1Rs2ND1ryYc", title: "CSS Full Course – Flexbox and Grid Tutorial" },
-                { id: "Ke90Tje7VS0", title: "React JS – Full Course for Beginners" },
-                { id: "ExIfD9gz_cI", title: "Node.js and Express – Full Course" },
-                { id: "4deVCNJq3qc", title: "Git and GitHub Crash Course" },
-                { id: "8aGhZQkoFbQ", title: "MongoDB Full Tutorial" },
-                { id: "nu_pCVPKzTk", title: "JavaScript DOM Manipulation – Full Course" },
-                { id: "ysEN5RaKOlA", title: "REST API with Node.js Tutorial" },
-            ];
-
-            // ============================================================
-
-            const thumb = id => `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
-
-            let player = null;
-            let all = PLAYLIST;
-            let filtered = [...all];
-            let cur = -1;
-            let isPlaying = false;
-            let seekInterval = null;
-            let isSeeking = false;
-            let watched = new Set(JSON.parse(localStorage.getItem('alg_w') || '[]'));
-            let savedTimes = JSON.parse(localStorage.getItem('alg_t') || '{}');  // { videoId: seconds }
-            let pendingResume = 0;
-
-            function onYouTubeIframeAPIReady() {
-                player = new YT.Player('ytPlayer', {
-                    height: '100%', width: '100%', videoId: '',
-                    playerVars: { autoplay: 1, rel: 0, modestbranding: 1, controls: 0, disablekb: 0 },
-                    events: {
-                        onReady: onPlayerReady,
-                        onStateChange: onStateChange
-                    }
-                });
-            }
-
-            function onPlayerReady() {
-                render();
-                play(0);
-                startSeekUpdater();
-            }
-
-            function onStateChange(e) {
-                const S = YT.PlayerState;
-                if (e.data === S.PLAYING) {
-                    isPlaying = true;
-                    setIcon('pause');
-                } else if (e.data === S.PAUSED || e.data === S.BUFFERING) {
-                    isPlaying = false;
-                    setIcon('play');
-                } else if (e.data === S.ENDED) {
-                    saveTime(all[cur].id, 0); // reset saved time on finish
-                    watched.add(all[cur].id);
-                    saveWatched();
-                    go(1);
-                }
-            }
-
-            // ── Play video by index ──
-            function play(idx) {
-                if (idx < 0 || idx >= all.length) return;
-                // Save current position before switching
-                if (cur >= 0 && player && player.getCurrentTime) {
-                    saveTime(all[cur].id, player.getCurrentTime());
-                }
-
-                cur = idx;
-                const v = all[cur];
-
-                // Check if there's a saved position
-                pendingResume = savedTimes[v.id] || 0;
-                if (pendingResume > 5) {
-                    showResumeBar(v.title, pendingResume);
-                } else {
-                    pendingResume = 0;
-                    hideResumeBar();
-                }
-
-                if (player && player.loadVideoById) {
-                    player.loadVideoById(v.id);
-                }
-
-                document.getElementById('npTitle').textContent = v.title;
-                document.getElementById('prevBtn').disabled = cur === 0;
-                document.getElementById('nextBtn').disabled = cur === all.length - 1;
-
-                updateProgress();
-                render();
-                setTimeout(() => document.querySelector('.vitem.active')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 80);
-            }
-
-            function go(dir) { play(cur + dir); }
-
-            // ── Play / Pause ──
-            function togglePlay() {
-                if (!player) return;
-                if (isPlaying) { player.pauseVideo(); }
-                else { player.playVideo(); }
-            }
-
-            function setIcon(state) {
-                const ic = document.getElementById('playIcon');
-                if (state === 'pause') {
-                    ic.innerHTML = '<rect x="6" y="4" width="4" height="16" fill="white"/><rect x="14" y="4" width="4" height="16" fill="white"/>';
-                } else {
-                    ic.innerHTML = '<polygon points="5 3 19 12 5 21 5 3" fill="white"/>';
-                }
-            }
-
-            // ── Skip seconds ──
-            function skipSecs(s) {
-                if (!player || !player.getCurrentTime) return;
-                const t = player.getCurrentTime();
-                player.seekTo(Math.max(0, t + s), true);
-            }
-
-            // ── Seek bar ──
-            function startSeekUpdater() {
-                seekInterval = setInterval(() => {
-                    if (!player || !player.getCurrentTime || isSeeking) return;
-                    const cur2 = player.getCurrentTime() || 0;
-                    const dur = player.getDuration() || 0;
-                    if (dur > 0) {
-                        const pct = (cur2 / dur) * 100;
-                        document.getElementById('seekFill').style.width = pct + '%';
-                        document.getElementById('seekBar').value = pct;
-                        document.getElementById('curTime').textContent = fmt(cur2);
-                        document.getElementById('durTime').textContent = fmt(dur);
-                    }
-                    // Auto-save position every 5 seconds
-                    if (Math.round(cur2) % 5 === 0 && cur2 > 0 && all[cur]) {
-                        saveTime(all[cur].id, cur2);
-                    }
-                }, 500);
-            }
-
-            function onSeekInput(val) {
-                isSeeking = true;
-                document.getElementById('seekFill').style.width = val + '%';
-                if (player && player.getDuration) {
-                    document.getElementById('curTime').textContent = fmt((val / 100) * player.getDuration());
-                }
-            }
-
-            function onSeekChange(val) {
-                if (player && player.getDuration) {
-                    player.seekTo((val / 100) * player.getDuration(), true);
-                }
-                isSeeking = false;
-            }
-
-            // ── Volume ──
-            let muted = false;
-            function setVolume(val) {
-                if (player && player.setVolume) player.setVolume(Number(val));
-                muted = val == 0;
-                updateVolIcon();
-            }
-
-            function toggleMute() {
-                if (!player) return;
-                if (muted) {
-                    player.unMute();
-                    player.setVolume(100);
-                    document.getElementById('volBar').value = 100;
-                } else {
-                    player.mute();
-                    document.getElementById('volBar').value = 0;
-                }
-                muted = !muted;
-                updateVolIcon();
-            }
-
-            function updateVolIcon() {
-                const wave = document.getElementById('volWave');
-                wave.style.display = muted ? 'none' : '';
-            }
-
-            // ── Resume ──
-            function showResumeBar(title, secs) {
-                const bar = document.getElementById('resumeBar');
-                const txt = document.getElementById('resumeText');
-                txt.textContent = `Resume "${title.substring(0, 40)}…" from ${fmt(secs)}?`;
-                bar.classList.add('show');
-            }
-            function hideResumeBar() { document.getElementById('resumeBar').classList.remove('show'); }
-
-            function doResume() {
-                if (player && pendingResume > 0) {
-                    setTimeout(() => player.seekTo(pendingResume, true), 800);
-                }
-                pendingResume = 0;
-                hideResumeBar();
-            }
-
-            function dismissResume() {
-                if (cur >= 0) saveTime(all[cur].id, 0);
-                pendingResume = 0;
-                hideResumeBar();
-            }
-
-            // ── Save helpers ──
-            function saveTime(id, t) {
-                savedTimes[id] = t;
-                localStorage.setItem('alg_t', JSON.stringify(savedTimes));
-            }
-
-            function saveWatched() {
-                localStorage.setItem('alg_w', JSON.stringify([...watched]));
-            }
-
-            // ── Progress ──
-            function updateProgress() {
-                const pct = all.length ? Math.round((watched.size / all.length) * 100) : 0;
-                document.getElementById('barFill').style.width = pct + '%';
-                document.getElementById('barPct').textContent = pct + '%';
-            }
-
-            // ── Render sidebar ──
-            function render() {
-                document.getElementById('sbCount').textContent = `${filtered.length} video${filtered.length !== 1 ? 's' : ''}`;
-                document.getElementById('vlist').innerHTML = filtered.map((v, i) => {
-                    const gi = all.indexOf(v);
-                    const active = gi === cur;
-                    const isW = watched.has(v.id);
-                    const hasSaved = savedTimes[v.id] > 5;
-                    return `<div class="vitem ${active ? 'active' : ''}" onclick="play(${gi})">
-        <span class="vnum">${i + 1}</span>
-        <div class="thumb">
-          <img src="${thumb(v.id)}" loading="lazy"/>
-          ${active ? `<div class="now-overlay"><div class="pulse"><svg width="10" height="10" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>` : ''}
+      <!-- Video Embed -->
+      <div class="video-wrapper">
+        <div class="video-frame-border">
+          <iframe
+            id="yt-player"
+            class="yt-iframe"
+            src="https://www.youtube.com/embed/<%= currentVideo.videoId %>?enablejsapi=1&rel=0&modestbranding=1&controls=1&disablekb=1&playsinline=1"
+            title="<%= currentVideo.title %>"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen>
+          </iframe>
         </div>
-        <div class="vmeta">
-          <div class="vtitle">${v.title}</div>
-          <div class="vbadge ${isW ? 'watched' : ''}">
-            ${isW ? '✓ Watched' : hasSaved ? '⏸ ' + fmt(savedTimes[v.id]) + ' saved' : ''}
+        <!-- Thin gradient accent under player -->
+        <div class="player-accent-line"></div>
+      </div>
+
+      <!-- Video Meta -->
+      <div class="video-meta">
+        <div class="video-meta-top">
+          <div class="lecture-badge">Lecture <%= currentVideo.index + 1 %></div>
+          <div class="video-actions">
+            <button class="icon-btn" title="Bookmark" onclick="toggleBookmark(this)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </button>
+            <button class="icon-btn" title="Notes">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </button>
           </div>
         </div>
-      </div>`;
-                }).join('');
-            }
+        <h1 class="video-title"><%= currentVideo.title %></h1>
+        <p class="video-description"><%= currentVideo.description %></p>
 
-            function filterVideos(q) {
-                filtered = q ? all.filter(v => v.title.toLowerCase().includes(q.toLowerCase())) : [...all];
-                render();
-            }
+        <!-- Instructor row -->
+        <div class="instructor-row">
+          <div class="instructor-avatar">
+            <img src="<%= course.instructorAvatar %>" alt="<%= course.instructor %>" />
+          </div>
+          <div class="instructor-info">
+            <span class="instructor-name"><%= course.instructor %></span>
+            <span class="instructor-role">Course Instructor</span>
+          </div>
+          <div class="video-stats">
+            <span class="stat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> <%= currentVideo.duration %></span>
+            <span class="stat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> <%= currentVideo.views %></span>
+          </div>
+        </div>
+      </div>
 
-            // ── Format seconds → m:ss ──
-            function fmt(s) {
-                s = Math.floor(s || 0);
-                const m = Math.floor(s / 60);
-                const sec = String(s % 60).padStart(2, '0');
-                return `${m}:${sec}`;
-            }
+      <!-- Prev / Next navigation -->
+      <div class="lesson-nav">
+        <% if (prevVideo) { %>
+        <a href="/player/<%= prevVideo.id %>" class="lesson-nav-btn prev">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+          <div class="lesson-nav-text">
+            <span class="lesson-nav-label">Previous</span>
+            <span class="lesson-nav-title"><%= prevVideo.title %></span>
+          </div>
+        </a>
+        <% } else { %>
+        <div class="lesson-nav-btn prev disabled"></div>
+        <% } %>
 
-            // Save position on page unload
-            window.addEventListener('beforeunload', () => {
-                if (cur >= 0 && player && player.getCurrentTime) {
-                    saveTime(all[cur].id, player.getCurrentTime());
-                }
-            });
-        </script>
-    </body>
+        <% if (nextVideo) { %>
+        <a href="/player/<%= nextVideo.id %>" class="lesson-nav-btn next">
+          <div class="lesson-nav-text">
+            <span class="lesson-nav-label">Next Lesson</span>
+            <span class="lesson-nav-title"><%= nextVideo.title %></span>
+          </div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <% } %>
+      </div>
+
+    </section>
+
+    <!-- ── RIGHT: PLAYLIST SIDEBAR ───────────────── -->
+    <aside class="playlist-sidebar">
+
+      <div class="sidebar-header">
+        <h2 class="sidebar-heading">Course Content</h2>
+        <span class="sidebar-count"><%= totalCount %> lessons</span>
+      </div>
+
+      <!-- Overall progress -->
+      <div class="sidebar-progress">
+        <div class="sidebar-progress-bar">
+          <div class="sidebar-progress-fill" style="width: <%= progressPercent %>%"></div>
+        </div>
+        <span class="sidebar-progress-text"><%= progressPercent %>% complete</span>
+      </div>
+
+      <!-- Section filter tabs (optional sections) -->
+      <div class="section-tabs">
+        <% sections.forEach((section, i) => { %>
+        <button
+          class="section-tab <%= i === activeSectionIndex ? 'active' : '' %>"
+          onclick="scrollToSection('<%= section.id %>')">
+          <%= section.title %>
+        </button>
+        <% }) %>
+      </div>
+
+      <!-- Scrollable lesson list -->
+      <div class="lessons-scroll" id="lessons-scroll">
+        <% sections.forEach((section, si) => { %>
+
+        <div class="section-group" id="section-<%= section.id %>">
+          <div class="section-label">
+            <span><%= section.title %></span>
+            <span class="section-duration"><%= section.totalDuration %></span>
+          </div>
+
+          <% section.videos.forEach((video, vi) => { %>
+          <a
+            href="/player/<%= video.id %>"
+            class="lesson-item <%= video.id === currentVideo.id ? 'active' : '' %> <%= video.completed ? 'completed' : '' %>"
+            data-video-id="<%= video.videoId %>">
+
+            <!-- Thumbnail -->
+            <div class="lesson-thumb-wrap">
+              <img
+                src="https://img.youtube.com/vi/<%= video.videoId %>/mqdefault.jpg"
+                alt="<%= video.title %>"
+                class="lesson-thumb"
+                loading="lazy" />
+              <!-- Play overlay -->
+              <div class="thumb-overlay">
+                <% if (video.completed) { %>
+                <div class="thumb-check">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <% } else if (video.id === currentVideo.id) { %>
+                <div class="thumb-playing">
+                  <span></span><span></span><span></span>
+                </div>
+                <% } else { %>
+                <div class="thumb-play-icon">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                </div>
+                <% } %>
+              </div>
+              <span class="lesson-duration-badge"><%= video.duration %></span>
+            </div>
+
+            <!-- Info -->
+            <div class="lesson-info">
+              <span class="lesson-number">
+                <% if (video.completed) { %>
+                <svg class="check-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                <% } else { %>
+                <%= video.globalIndex + 1 %>.
+                <% } %>
+              </span>
+              <div class="lesson-text">
+                <span class="lesson-title"><%= video.title %></span>
+                <span class="lesson-meta">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  <%= video.duration %>
+                </span>
+              </div>
+            </div>
+
+          </a>
+          <% }) %>
+
+        </div>
+        <% }) %>
+      </div><!-- /lessons-scroll -->
+
+    </aside>
+
+  </main>
+
+  <!-- ═══════════════════════════════════════════════
+       SCRIPTS
+  ═══════════════════════════════════════════════ -->
+  <script>
+    // ── Auto-scroll active lesson into view ──────────
+    document.addEventListener('DOMContentLoaded', () => {
+      const active = document.querySelector('.lesson-item.active');
+      if (active) {
+        active.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+
+    // ── Bookmark toggle ──────────────────────────────
+    function toggleBookmark(btn) {
+      btn.classList.toggle('bookmarked');
+    }
+
+    // ── Scroll sidebar to section ────────────────────
+    function scrollToSection(id) {
+      const el = document.getElementById('section-' + id);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+    }
+
+    // ── YT Player API: auto-advance on video end ─────
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.head.appendChild(tag);
+
+    var player;
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('yt-player', {
+        events: {
+          'onStateChange': onPlayerStateChange
+        }
+      });
+    }
+
+    function onPlayerStateChange(event) {
+      // YT.PlayerState.ENDED = 0
+      if (event.data === 0) {
+        const nextBtn = document.querySelector('.lesson-nav-btn.next');
+        if (nextBtn) {
+          setTimeout(() => { nextBtn.click(); }, 300);
+        }
+      }
+    }
+  </script>
+
+</body>
+</html>
