@@ -39,7 +39,7 @@
         <div class="row align-items-center flex-column-reverse flex-lg-row g-5">
             <div class="col-lg-6 position-relative">
                 <div class="premium-image-wrapper">
-                    <img src="/images/mvj.webp" alt="MVJ College" class="premium-img glow-border">
+                    <img src="/images/mvj.png" alt="MVJ College" class="premium-img glow-border">
                 </div>
             </div>
             <div class="col-lg-6">
@@ -68,3 +68,32 @@
         </div>
     </section>
 </div>
+<script>
+    /* about.js — paste before </body> in your about EJS */
+
+document.addEventListener('DOMContentLoaded', function () {
+
+  // All elements to reveal on scroll
+  const revealTargets = [
+    '.section-title',
+    '.section-desc',
+    '.premium-btn',
+    '.premium-image-wrapper',
+    '.mission-glass-card',
+  ];
+
+  const allEls = document.querySelectorAll(revealTargets.join(','));
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.14 });
+
+  allEls.forEach(el => observer.observe(el));
+
+});
+</script>

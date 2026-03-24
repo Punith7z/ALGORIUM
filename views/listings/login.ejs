@@ -43,3 +43,51 @@ Continue to Algorium
 </div>
 
 </section>
+<script>
+    /* login.js — paste before </body> in your login EJS */
+
+document.addEventListener('DOMContentLoaded', function () {
+
+  // ── Inject dot grid layer ─────────────────────────────────
+  const section = document.querySelector('.login-section');
+  if (section) {
+    const dots = document.createElement('div');
+    dots.classList.add('login-dots');
+    section.prepend(dots);
+  }
+
+  // ── Input focus — add active class to group ───────────────
+  document.querySelectorAll('.input-group input').forEach(input => {
+    input.addEventListener('focus', () => {
+      input.closest('.input-group').classList.add('active');
+    });
+    input.addEventListener('blur', () => {
+      input.closest('.input-group').classList.remove('active');
+    });
+  });
+
+  // ── Submit button — loading state ─────────────────────────
+  const form = document.querySelector('.login-card form');
+  const btn  = document.querySelector('.login-btn');
+
+  if (form && btn) {
+    form.addEventListener('submit', function (e) {
+      btn.textContent = 'Launching Algorium...';
+      btn.style.opacity = '0.85';
+      btn.style.cursor  = 'not-allowed';
+      btn.style.animation = 'none';
+      btn.style.background = 'linear-gradient(110deg, #FF8C00, #FF3D00)';
+    });
+  }
+
+  // ── Semester input — clamp between 1 and 8 ───────────────
+  const semInput = document.querySelector('input[type="number"]');
+  if (semInput) {
+    semInput.addEventListener('input', () => {
+      if (semInput.value > 8) semInput.value = 8;
+      if (semInput.value < 1 && semInput.value !== '') semInput.value = 1;
+    });
+  }
+
+});
+</script>
