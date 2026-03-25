@@ -23,6 +23,15 @@ app.listen(port, () => {
 app.get("/", async (req, res) => {
     res.render("listings/home.ejs")
 });
+app.get("/ai-intro", async (req, res) => {
+    res.render("listings/ai-intro.ejs")
+});
+app.get("/webdev-intro", async (req, res) => {
+    res.render("listings/webdev-intro.ejs")
+});
+app.get("/ds-intro", async (req, res) => {
+    res.render("listings/ds-intro.ejs")
+});
 app.get("/about", async (req, res) => {
     res.render("listings/about.ejs")
 })

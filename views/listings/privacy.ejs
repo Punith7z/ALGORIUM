@@ -9,10 +9,7 @@
             <div class="policy-header">
                 <div class="policy-header-inner">
 
-                    <div>
-                        <h1>Privacy Policy</h1>
-                        <p class="subtitle">Algorium Platform</p>
-                    </div>
+
                 </div>
             </div>
 
@@ -22,7 +19,7 @@
                 <p>Transparent. Secure. Built for future developers.</p>
             </section>
 
-            <div class="container">
+            <div class="container-privacy">
 
                 <!-- SIDEBAR -->
                 <aside class="sidebar">
@@ -127,7 +124,66 @@
                 }
             });
         });
+        /* privacy.js — replaces your existing privacy.js file */
 
+document.addEventListener('DOMContentLoaded', function () {
+
+  // ── Add number badges to section headings ─────────────────
+  document.querySelectorAll('.content section h3').forEach(h3 => {
+    const match = h3.textContent.match(/^(\d+)\./);
+    if (match) {
+      h3.setAttribute('data-num', match[1]);
+      h3.textContent = h3.textContent.replace(/^\d+\.\s*/, '');
+    }
+  });
+
+  // ── Scroll reveal for content sections ───────────────────
+  const sections = document.querySelectorAll('.content section');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => {
+          entry.target.classList.add('visible');
+        }, 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  sections.forEach(section => observer.observe(section));
+
+  // ── Smooth scroll ─────────────────────────────────────────
+  document.querySelectorAll('.sidebar a').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(link.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  // ── Active sidebar highlight on scroll ───────────────────
+  const contentSections = document.querySelectorAll('.content section');
+  const navLinks        = document.querySelectorAll('.sidebar a');
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    contentSections.forEach(section => {
+      if (window.scrollY >= section.offsetTop - 140) {
+        current = section.id;
+      }
+    });
+
+    navLinks.forEach(link => {
+      link.classList.remove('active');
+      if (link.getAttribute('href') === '#' + current) {
+        link.classList.add('active');
+      }
+    });
+  }, { passive: true });
+
+});
+        
     </script>
 
     </body>
