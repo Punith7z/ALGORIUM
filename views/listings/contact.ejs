@@ -48,24 +48,19 @@ questions, collaboration opportunities, or academic support.
 
 <div class="contact-form-card">
 
-<form>
-
-<div class="form-row">
-<input type="text" placeholder="Your Name" required>
-</div>
-
-<div class="form-row">
-<input type="email" placeholder="Your Email" required>
-</div>
-
-<div class="form-row">
-<textarea placeholder="Your Message" required></textarea>
-</div>
-
-<button class="contact-send">
-Send Message
-</button>
-
+<form id="contact-form">
+  <div class="form-row">
+    <input type="text" id="c-name" placeholder="Your Name" required>
+  </div>
+  <div class="form-row">
+    <input type="email" id="c-email" placeholder="Your Email" required>
+  </div>
+  <div class="form-row">
+    <textarea id="c-message" placeholder="Your Message" required></textarea>
+  </div>
+  <button class="contact-send" type="button" onclick="sendMessage()">
+    Send Message
+  </button>
 </form>
 
 </div>
@@ -137,4 +132,43 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
 });
+
+async function sendMessage() {
+  const btn     = document.querySelector('.contact-send');
+  const name    = document.getElementById('c-name').value.trim();
+  const email   = document.getElementById('c-email').value.trim();
+  const message = document.getElementById('c-message').value.trim();
+
+  if (!name || !email || !message) {
+    btn.textContent   = '⚠️ Fill all fields!';
+    btn.style.background = 'linear-gradient(110deg, #f59e0b, #d97706)';
+    setTimeout(() => {
+      btn.textContent  = 'Send Message';
+      btn.style.background = '';
+    }, 2000);
+    return;
+  }
+
+  btn.textContent = 'Sending...';
+  btn.disabled    = true;
+
+  const res  = await fetch('/contact', {
+    method : 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body   : JSON.stringify({ name, email, message })
+  });
+  const data = await res.json();
+
+  if (data.success) {
+    btn.textContent       = '✓ Message Sent!';
+    btn.style.background  = 'linear-gradient(110deg, #22c55e, #16a34a)';
+    btn.style.boxShadow   = '0 8px 28px rgba(34,197,94,0.35)';
+    document.getElementById('contact-form').reset();
+  } else {
+    btn.textContent      = '✗ Failed. Try Again';
+    btn.style.background = 'linear-gradient(110deg, #ef4444, #dc2626)';
+    btn.disabled         = false;
+  }
+}
+
 </script>

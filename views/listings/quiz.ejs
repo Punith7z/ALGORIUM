@@ -1,64 +1,530 @@
-<section class="quiz-section">
+<% layout("/layouts/boilerplate.ejs") %>
 
-<div class="quiz-container">
+<div class="quiz-page">
+  <div class="quiz-bg-glow"></div>
+  <div class="quiz-dots"></div>
 
-<!-- progress -->
-<div class="quiz-progress">
-<div class="progress">
-<div class="progress-bar" style="width:30%"></div>
+  <!-- ══ START SCREEN ══ -->
+  <div class="quiz-screen" id="screen-start">
+    <div class="quiz-start-card">
+      <div class="quiz-start-emoji"><img src="/images/aibrain.png" alt="" style="height: 18rem; width: auto;"></div>
+      <div class="quiz-start-badge">Algorium Knowledge Check</div>
+      <h1 class="quiz-start-title">Are You Ready to <span class="quiz-grad">Prove</span> It?</h1>
+      <p class="quiz-start-sub">5 questions · Timed · Instant feedback · See how much you've learned</p>
+      <div class="quiz-start-stats">
+        <div class="qss-item"><span>5</span><p>Questions</p></div>
+        <div class="qss-div"></div>
+        <div class="qss-item"><span>30s</span><p>Per Q</p></div>
+        <div class="qss-div"></div>
+        <div class="qss-item"><span>+10</span><p>Per Right</p></div>
+      </div>
+      <button class="quiz-btn" id="btn-start" onclick="startQuiz()">
+        Let's Go <i class="fa-solid fa-rocket ms-2"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- ══ QUIZ SCREEN ══ -->
+  <div class="quiz-screen hidden" id="screen-quiz">
+    <div class="quiz-card">
+
+      <!-- Header -->
+      <div class="quiz-header">
+        <div class="quiz-progress-wrap">
+          <div class="quiz-progress-bar" id="progress-bar"></div>
+        </div>
+        <div class="quiz-meta">
+          <span class="quiz-counter" id="q-counter">Question 1 of 5</span>
+          <div class="quiz-timer-wrap">
+            <svg class="quiz-timer-ring" viewBox="0 0 44 44">
+              <circle class="ring-bg" cx="22" cy="22" r="18"/>
+              <circle class="ring-fg" id="ring-fg" cx="22" cy="22" r="18"/>
+            </svg>
+            <span class="quiz-timer-num" id="timer-num">30</span>
+          </div>
+          <span class="quiz-score-live">Score: <strong id="live-score">0</strong></span>
+        </div>
+      </div>
+
+      <!-- Question -->
+      <div class="quiz-question-wrap">
+        <div class="quiz-q-emoji" id="q-emoji">❓</div>
+        <h2 class="quiz-question" id="question-text">Loading...</h2>
+      </div>
+
+      <!-- Options -->
+      <div class="quiz-options" id="options-wrap"></div>
+
+      <!-- Explanation box -->
+      <div class="quiz-explanation hidden" id="explanation-box">
+        <div class="quiz-exp-icon" id="exp-icon">💡</div>
+        <p id="explanation-text"></p>
+      </div>
+
+      <!-- Next Button -->
+      <button class="quiz-btn quiz-next-btn hidden" id="btn-next" onclick="nextQuestion()">
+        Next Question <i class="fa-solid fa-arrow-right ms-2"></i>
+      </button>
+
+    </div>
+  </div>
+
+  <!-- ══ RESULT SCREEN ══ -->
+  <div class="quiz-screen hidden" id="screen-result">
+    <div class="quiz-result-card">
+      <div class="quiz-result-emoji" id="result-emoji">🎉</div>
+      <h1 class="quiz-result-title" id="result-title">Amazing!</h1>
+      <p class="quiz-result-sub" id="result-sub">You crushed it.</p>
+
+      <div class="quiz-score-circle">
+        <svg viewBox="0 0 120 120">
+          <circle class="sc-bg" cx="60" cy="60" r="52"/>
+          <circle class="sc-fg" id="score-ring" cx="60" cy="60" r="52"/>
+        </svg>
+        <div class="quiz-score-text">
+          <span id="final-score">0</span>
+          <small>/ 50</small>
+        </div>
+      </div>
+
+      <div class="quiz-result-stats">
+        <div class="qrs-item correct-stat">
+          <span id="correct-count">0</span>
+          <p>Correct</p>
+        </div>
+        <div class="qrs-item wrong-stat">
+          <span id="wrong-count">0</span>
+          <p>Wrong</p>
+        </div>
+        <div class="qrs-item time-stat">
+          <span id="time-taken">0s</span>
+          <p>Time</p>
+        </div>
+      </div>
+
+      <div class="quiz-result-badge" id="result-badge"></div>
+
+      <div class="quiz-result-btns">
+        <button class="quiz-btn" onclick="restartQuiz()">
+          Try Again <i class="fa-solid fa-rotate-right ms-2"></i>
+        </button>
+        <a href="/explore" class="quiz-btn quiz-btn-outline">
+          Explore More <i class="fa-solid fa-compass ms-2"></i>
+        </a>
+      </div>
+
+      <!-- Confetti canvas -->
+      <canvas id="confetti-canvas"></canvas>
+    </div>
+  </div>
 </div>
-<p class="question-count">Question 3 of 10</p>
-</div>
 
-<!-- question -->
-<div class="question-box">
+<script>
+// ══════════════════════════════════════════════════
+//  QUIZ DATA — replace with DB fetch later
+// ══════════════════════════════════════════════════
+const quizData = [
+  {
+    id: 1, 
+    question: "What does the 'M' in MERN stack stand for?",
+    options: ["MySQL", "MongoDB", "MariaDB", "Microsoft SQL"],
+    correct: 1,
+    explanation: "MERN stands for MongoDB, Express, React, and Node.js — the most popular full-stack JavaScript combination."
+  },
+  {
+    id: 2, 
+    question: "Which algorithm is commonly used for classification tasks in Machine Learning?",
+    options: ["Linear Regression", "K-Means Clustering", "Random Forest", "PCA"],
+    correct: 2,
+    explanation: "Random Forest is a powerful ensemble classification algorithm that builds multiple decision trees and merges them for a more accurate result."
+  },
+  {
+    id: 3, 
+    question: "What is the full form of CNN in Deep Learning?",
+    options: ["Central Neural Network", "Convolutional Neural Network", "Computed Neuron Network", "Clustered Node Network"],
+    correct: 1,
+    explanation: "CNN stands for Convolutional Neural Network — primarily used for image recognition, object detection, and computer vision tasks."
+  },
+  {
+    id: 4, 
+    question: "Which of the following is a NoSQL database?",
+    options: ["PostgreSQL", "MySQL", "MongoDB", "SQLite"],
+    correct: 2,
+    explanation: "MongoDB is a NoSQL document database that stores data in flexible, JSON-like documents instead of tables and rows."
+  },
+  {
+    id: 5, 
+    question: "What does REST stand for in REST API?",
+    options: ["Relational Entity State Transfer", "Representational State Transfer", "Remote Execution State Transfer", "Resource Entity State Transfer"],
+    correct: 1,
+    explanation: "REST stands for Representational State Transfer — an architectural style for designing networked applications using HTTP methods."
+  }
+];
 
-<h2 class="question-text">
-What is the primary goal of Machine Learning?
-</h2>
+// ══════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════
+let currentQ    = 0;
+let score       = 0;
+let correct     = 0;
+let wrong       = 0;
+let answered    = false;
+let timerInterval = null;
+let timeLeft    = 30;
+let totalTime   = 0;
+let startTime   = null;
 
-</div>
+const CIRCUMFERENCE_SMALL = 2 * Math.PI * 18; // timer ring
+const CIRCUMFERENCE_LARGE = 2 * Math.PI * 52; // score ring
 
-<!-- options -->
+// ══════════════════════════════════════════════════
+//  SCREENS
+// ══════════════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.quiz-screen').forEach(s => s.classList.add('hidden'));
+  const el = document.getElementById(id);
+  el.classList.remove('hidden');
+  el.classList.add('screen-enter');
+  setTimeout(() => el.classList.remove('screen-enter'), 600);
+}
 
-<div class="options-grid">
+// ══════════════════════════════════════════════════
+//  START
+// ══════════════════════════════════════════════════
+function startQuiz() {
+  currentQ  = 0; score = 0; correct = 0; wrong = 0;
+  startTime = Date.now();
+  showScreen('screen-quiz');
+  loadQuestion();
+}
 
-<label class="option-card">
-<input type="radio" name="q1">
-<span>To create computer hardware</span>
-</label>
+// ══════════════════════════════════════════════════
+//  LOAD QUESTION
+// ══════════════════════════════════════════════════
+function loadQuestion() {
+  answered = false;
+  timeLeft = 30;
+  const q  = quizData[currentQ];
 
-<label class="option-card">
-<input type="radio" name="q1">
-<span>To enable systems to learn from data</span>
-</label>
+  // Progress bar
+  const pct = (currentQ / quizData.length) * 100;
+  document.getElementById('progress-bar').style.width = pct + '%';
 
-<label class="option-card">
-<input type="radio" name="q1">
-<span>To replace programming languages</span>
-</label>
+  // Meta
+  document.getElementById('q-counter').textContent = `Question ${currentQ + 1} of ${quizData.length}`;
+  document.getElementById('live-score').textContent = score;
+  document.getElementById('q-emoji').textContent    = q.emoji;
 
-<label class="option-card">
-<input type="radio" name="q1">
-<span>To increase internet speed</span>
-</label>
+  // Question text — animate in
+  const qEl = document.getElementById('question-text');
+  qEl.style.opacity   = '0';
+  qEl.style.transform = 'translateY(16px)';
+  qEl.textContent     = q.question;
+  setTimeout(() => {
+    qEl.style.transition = 'all 0.4s ease';
+    qEl.style.opacity    = '1';
+    qEl.style.transform  = 'translateY(0)';
+  }, 50);
 
-</div>
+  // Options
+  const wrap = document.getElementById('options-wrap');
+  wrap.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className   = 'quiz-option';
+    btn.innerHTML   = `<span class="opt-letter">${['A','B','C','D'][i]}</span><span class="opt-text">${opt}</span>`;
+    btn.style.animationDelay = (i * 0.08) + 's';
+    btn.classList.add('opt-enter');
+    btn.onclick = () => selectAnswer(i, btn);
+    wrap.appendChild(btn);
+  });
 
-<!-- navigation -->
+  // Hide explanation & next
+  document.getElementById('explanation-box').classList.add('hidden');
+  document.getElementById('btn-next').classList.add('hidden');
 
-<div class="quiz-controls">
+  // Reset timer ring
+  const ring = document.getElementById('ring-fg');
+  ring.style.strokeDasharray  = CIRCUMFERENCE_SMALL;
+  ring.style.strokeDashoffset = '0';
+  ring.style.stroke           = '#FF5500';
 
-<button class="btn prev-btn">
-Previous
-</button>
+  startTimer();
+}
 
-<button class="btn next-btn">
-Next
-</button>
+// ══════════════════════════════════════════════════
+//  TIMER
+// ══════════════════════════════════════════════════
+function startTimer() {
+  clearInterval(timerInterval);
+  const ring    = document.getElementById('ring-fg');
+  const numEl   = document.getElementById('timer-num');
+  ring.style.strokeDasharray = CIRCUMFERENCE_SMALL;
 
-</div>
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    numEl.textContent = timeLeft;
 
-</div>
+    const offset = CIRCUMFERENCE_SMALL * (1 - timeLeft / 30);
+    ring.style.strokeDashoffset = offset;
 
-</section>
+    // Color warning
+    if (timeLeft <= 10) ring.style.stroke = '#ef4444';
+    if (timeLeft <= 5)  numEl.style.color = '#ef4444';
+
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      timeUp();
+    }
+  }, 1000);
+}
+
+function timeUp() {
+  if (answered) return;
+  answered = true;
+  wrong++;
+  shakeCard();
+  revealAnswer(-1);
+}
+
+// ══════════════════════════════════════════════════
+//  SELECT ANSWER
+// ══════════════════════════════════════════════════
+function selectAnswer(idx, btn) {
+  if (answered) return;
+  answered = true;
+  clearInterval(timerInterval);
+
+  const q = quizData[currentQ];
+
+  if (idx === q.correct) {
+    score  += 10;
+    correct++;
+    btn.classList.add('opt-correct');
+    document.getElementById('live-score').textContent = score;
+    burstParticles(btn);
+    showEmoji('🎉');
+  } else {
+    wrong++;
+    btn.classList.add('opt-wrong');
+    shakeCard();
+    showEmoji('😬');
+  }
+
+  revealAnswer(idx);
+}
+
+function revealAnswer(selected) {
+  const q    = quizData[currentQ];
+  const opts = document.querySelectorAll('.quiz-option');
+
+  opts.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.correct) btn.classList.add('opt-correct');
+  });
+
+  // Show explanation
+  const expBox  = document.getElementById('explanation-box');
+  const expIcon = document.getElementById('exp-icon');
+  const expText = document.getElementById('explanation-text');
+
+  expIcon.textContent = selected === q.correct ? '✅' : '❌';
+  expText.textContent = q.explanation;
+  expBox.classList.remove('hidden');
+  expBox.classList.add('exp-enter');
+
+  // Show next button
+  const nextBtn = document.getElementById('btn-next');
+  nextBtn.classList.remove('hidden');
+  nextBtn.textContent = currentQ < quizData.length - 1
+    ? 'Next Question →'
+    : 'See Results 🏆';
+}
+
+// ══════════════════════════════════════════════════
+//  NEXT QUESTION
+// ══════════════════════════════════════════════════
+function nextQuestion() {
+  currentQ++;
+  if (currentQ >= quizData.length) {
+    showResult();
+  } else {
+    loadQuestion();
+  }
+}
+
+// ══════════════════════════════════════════════════
+//  RESULT
+// ══════════════════════════════════════════════════
+function showResult() {
+  clearInterval(timerInterval);
+  totalTime = Math.round((Date.now() - startTime) / 1000);
+
+  showScreen('screen-result');
+
+  // Score ring animation
+  setTimeout(() => {
+    const pct    = score / 50;
+    const offset = CIRCUMFERENCE_LARGE * (1 - pct);
+    const ring   = document.getElementById('score-ring');
+    ring.style.strokeDasharray  = CIRCUMFERENCE_LARGE;
+    ring.style.strokeDashoffset = CIRCUMFERENCE_LARGE;
+
+    setTimeout(() => {
+      ring.style.transition      = 'stroke-dashoffset 1.4s cubic-bezier(0.4,0,0.2,1)';
+      ring.style.strokeDashoffset = offset;
+    }, 200);
+
+    // Count up score
+    let s = 0;
+    const scoreEl = document.getElementById('final-score');
+    const scoreInterval = setInterval(() => {
+      s += 2;
+      scoreEl.textContent = Math.min(s, score);
+      if (s >= score) clearInterval(scoreInterval);
+    }, 40);
+  }, 300);
+
+  document.getElementById('correct-count').textContent = correct;
+  document.getElementById('wrong-count').textContent   = wrong;
+  document.getElementById('time-taken').textContent    = totalTime + 's';
+
+  // Dynamic result message
+  const pct = score / 50;
+  let emoji, title, sub, badge;
+
+  if (pct === 1) {
+    emoji = '🌟 '; title = 'Perfect Score!';
+    sub   = 'Absolutely flawless. You are a genius.';
+    badge = '🌟 Grandmaster';
+  } else if (pct >= 0.8) {
+    emoji = '🔥'; title = 'Outstanding!';
+    sub   = 'You really know your stuff. Keep it up!';
+    badge = 'Expert';
+  } else if (pct >= 0.6) {
+    emoji = '⚡'; title = 'Great Job!';
+    sub   = 'Solid performance. A little more practice and you\'ll ace it!';
+    badge = 'Advanced';
+  } else if (pct >= 0.4) {
+    emoji = '📚'; title = 'Keep Going!';
+    sub   = 'Good start! Review the topics and try again.';
+    badge = 'Learning';
+  } else {
+    emoji = '🚀'; title = 'Just Getting Started!';
+    sub   = 'Don\'t give up — every expert was once a beginner.';
+    badge = 'Beginner';
+  }
+
+  document.getElementById('result-emoji').textContent  = emoji;
+  document.getElementById('result-title').textContent  = title;
+  document.getElementById('result-sub').textContent    = sub;
+  document.getElementById('result-badge').textContent  = badge;
+
+  if (pct >= 0.6) launchConfetti();
+}
+
+// ══════════════════════════════════════════════════
+//  RESTART
+// ══════════════════════════════════════════════════
+function restartQuiz() {
+  showScreen('screen-start');
+}
+
+// ══════════════════════════════════════════════════
+//  PHYSICS — PARTICLE BURST
+// ══════════════════════════════════════════════════
+function burstParticles(btn) {
+  const rect    = btn.getBoundingClientRect();
+  const cx      = rect.left + rect.width / 2;
+  const cy      = rect.top  + rect.height / 2;
+  const colors  = ['#FF5500','#FF8C00','#FFD700','#22c55e','#3b82f6','#f472b6'];
+
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement('div');
+    p.className = 'quiz-particle';
+    const angle = (i / 18) * 360;
+    const dist  = 60 + Math.random() * 60;
+    const dx    = Math.cos(angle * Math.PI / 180) * dist;
+    const dy    = Math.sin(angle * Math.PI / 180) * dist;
+    const size  = 6 + Math.random() * 6;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+
+    p.style.cssText = `
+      position:fixed; width:${size}px; height:${size}px;
+      background:${color}; border-radius:50%;
+      left:${cx}px; top:${cy}px;
+      pointer-events:none; z-index:9999;
+      animation: particleFly 0.7s ease-out forwards;
+      --dx:${dx}px; --dy:${dy}px;
+    `;
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 800);
+  }
+}
+
+// ══════════════════════════════════════════════════
+//  CONFETTI
+// ══════════════════════════════════════════════════
+function launchConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx    = canvas.getContext('2d');
+  canvas.width  = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+
+  const pieces = [];
+  const colors = ['#FF5500','#FF8C00','#FFD700','#22c55e','#3b82f6','#f472b6','#a78bfa'];
+
+  for (let i = 0; i < 120; i++) {
+    pieces.push({
+      x    : Math.random() * canvas.width,
+      y    : Math.random() * canvas.height - canvas.height,
+      w    : 6 + Math.random() * 8,
+      h    : 10 + Math.random() * 14,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      rot  : Math.random() * 360,
+      vx   : -2 + Math.random() * 4,
+      vy   : 2 + Math.random() * 4,
+      vr   : -3 + Math.random() * 6
+    });
+  }
+
+  let frame;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pieces.forEach(p => {
+      ctx.save();
+      ctx.translate(p.x + p.w/2, p.y + p.h/2);
+      ctx.rotate(p.rot * Math.PI / 180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      ctx.restore();
+      p.x  += p.vx;
+      p.y  += p.vy;
+      p.rot += p.vr;
+    });
+    frame = requestAnimationFrame(draw);
+    if (pieces.every(p => p.y > canvas.height + 20)) {
+      cancelAnimationFrame(frame);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }
+  draw();
+}
+
+// ══════════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════════
+function shakeCard() {
+  const card = document.querySelector('#screen-quiz .quiz-card');
+  card.classList.add('shake');
+  setTimeout(() => card.classList.remove('shake'), 500);
+}
+
+function showEmoji(e) {
+  const el = document.createElement('div');
+  el.className   = 'quiz-float-emoji';
+  el.textContent = e;
+  document.querySelector('#screen-quiz .quiz-card').appendChild(el);
+  setTimeout(() => el.remove(), 1200);
+}
+</script>

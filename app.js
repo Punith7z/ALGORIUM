@@ -3,6 +3,8 @@ const app = express()
 const path = require("path")
 const ejsMate = require("ejs-mate");
 let port = 8080
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());   // ← ADD THIS
 
 app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
@@ -32,6 +34,10 @@ app.get("/webdev-intro", async (req, res) => {
 app.get("/ds-intro", async (req, res) => {
     res.render("listings/ds-intro.ejs")
 });
+app.get("/quiz", async (req, res) => {
+    res.render("listings/quiz.ejs")
+});
+
 app.get("/about", async (req, res) => {
     res.render("listings/about.ejs")
 })
@@ -252,5 +258,39 @@ app.get('/player2/:lessonId', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.send("Error loading playlist");
+  }
+});
+const nodemailer = require('nodemailer');
+
+app.post('/contact', async (req, res) => {
+  const { name, email, message } = req.body;
+
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'Algoriumhelp@gmail.com',      // ← your Gmail
+      pass: 'swxunoajmxwlgtwc'     // ← Gmail App Password (NOT your real password)
+    }
+  });
+
+  const mailOptions = {
+    from    : email,
+    to      : 'algoriumhelp@gmail.com',    // ← where you receive
+    subject : `New Message from Algorium Contact — ${name}`,
+    html    : `
+      <h2 style="color:#FF5500;">New Contact Form Submission</h2>
+      <p><strong>Name:</strong> ${name}</p>
+      <p><strong>Email:</strong> ${email}</p>
+      <p><strong>Message:</strong></p>
+      <p>${message}</p>
+    `
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.json({ success: false });
   }
 });
