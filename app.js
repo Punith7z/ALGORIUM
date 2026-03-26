@@ -3,8 +3,28 @@ const app = express()
 const path = require("path")
 const ejsMate = require("ejs-mate");
 let port = 8080
+const session = require('express-session');
+
+const quizRoutes = require("./routes/quiz");
+app.use("/", quizRoutes);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());   // ← ADD THIS
+app.use(session({
+  secret: 'your-secret-key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 day
+}));
+const authRoutes = require('./routes/auth');
+app.use('/', authRoutes);
+const requireLogin = require('./middleware/requireLogin');
+
+
+const mongoose = require('mongoose');
+
+mongoose.connect('mongodb://127.0.0.1:27017/algorium')
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.log('DB connection error:', err));
 
 app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
@@ -34,9 +54,6 @@ app.get("/webdev-intro", async (req, res) => {
 app.get("/ds-intro", async (req, res) => {
     res.render("listings/ds-intro.ejs")
 });
-app.get("/quiz", async (req, res) => {
-    res.render("listings/quiz.ejs")
-});
 
 app.get("/about", async (req, res) => {
     res.render("listings/about.ejs")
@@ -61,7 +78,7 @@ app.get("/privacy", async (req, res) => {
 
 const axios = require('axios');
 
-app.get('/player', (req, res) => {
+app.get('/player',requireLogin, (req, res) => {
   res.redirect('/player/0');
 });
 
@@ -128,7 +145,7 @@ app.get('/player/:lessonId', async (req, res) => {
 });
 
 
-app.get('/player1', (req, res) => {
+app.get('/player1',requireLogin, (req, res) => {
   res.redirect('/player1/0');
 });
 
@@ -195,7 +212,7 @@ app.get('/player1/:lessonId', async (req, res) => {
 });
 
 
-app.get('/player2', (req, res) => {
+app.get('/player2', requireLogin,(req, res) => {
   res.redirect('/player2/0');
 });
 

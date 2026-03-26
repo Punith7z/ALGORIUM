@@ -18,9 +18,15 @@
   ═══════════════════════════════════════════════ -->
   <nav class="navbar">
     <div class="navbar-left">
+      <button class="btn-go-back" onclick="history.back()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Back
+      </button>
       <a href="/" class="logo-link">
         <!-- Replace src with your actual logo path -->
-        <img src="/images/algo.png" alt="Algorium" class="navbar-logo" />
+        <img src="/images/algo-removebg-preview.png" alt="Algorium" class="navbar-logo" />
       </a>
     </div>
     <div class="navbar-center">
@@ -51,7 +57,7 @@
           <iframe
             id="yt-player"
             class="yt-iframe"
-            src="https://www.youtube.com/embed/<%= currentVideo.videoId %>?enablejsapi=1&rel=0&modestbranding=1&controls=1&disablekb=1&playsinline=1"
+            src="https://www.youtube.com/embed/<%= currentVideo.videoId %>?enablejsapi=1&rel=0&modestbranding=1&color=white&iv_load_policy=3"
             title="<%= currentVideo.title %>"
             frameborder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -76,7 +82,6 @@
           </div>
         </div>
         <h1 class="video-title"><%= currentVideo.title %></h1>
-        <p class="video-description"><%= currentVideo.description %></p>
 
         <!-- Instructor row -->
         <div class="instructor-row">
@@ -97,7 +102,7 @@
       <!-- Prev / Next navigation -->
       <div class="lesson-nav">
         <% if (prevVideo) { %>
-        <a href="/player/<%= prevVideo.id %>" class="lesson-nav-btn prev">
+        <a href="/course/<%= course.id %>/lesson/<%= prevVideo.id %>" class="lesson-nav-btn prev">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
           <div class="lesson-nav-text">
             <span class="lesson-nav-label">Previous</span>
@@ -109,7 +114,7 @@
         <% } %>
 
         <% if (nextVideo) { %>
-        <a href="/player/<%= nextVideo.id %>" class="lesson-nav-btn next">
+        <a href="/course/<%= course.id %>/lesson/<%= nextVideo.id %>" class="lesson-nav-btn next">
           <div class="lesson-nav-text">
             <span class="lesson-nav-label">Next Lesson</span>
             <span class="lesson-nav-title"><%= nextVideo.title %></span>
@@ -160,7 +165,7 @@
 
           <% section.videos.forEach((video, vi) => { %>
           <a
-            href="/player/<%= video.id %>"
+            href="/course/<%= course.id %>/lesson/<%= video.id %>"
             class="lesson-item <%= video.id === currentVideo.id ? 'active' : '' %> <%= video.completed ? 'completed' : '' %>"
             data-video-id="<%= video.videoId %>">
 
@@ -263,7 +268,7 @@
       if (event.data === 0) {
         const nextBtn = document.querySelector('.lesson-nav-btn.next');
         if (nextBtn) {
-          setTimeout(() => { nextBtn.click(); }, 300);
+          setTimeout(() => { nextBtn.click(); }, 1200);
         }
       }
     }

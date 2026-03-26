@@ -12,7 +12,7 @@
       <h1 class="quiz-start-title">Are You Ready to <span class="quiz-grad">Prove</span> It?</h1>
       <p class="quiz-start-sub">5 questions · Timed · Instant feedback · See how much you've learned</p>
       <div class="quiz-start-stats">
-        <div class="qss-item"><span>5</span><p>Questions</p></div>
+        <div class="qss-item"><span>15</span><p>Questions</p></div>
         <div class="qss-div"></div>
         <div class="qss-item"><span>30s</span><p>Per Q</p></div>
         <div class="qss-div"></div>
@@ -34,7 +34,7 @@
           <div class="quiz-progress-bar" id="progress-bar"></div>
         </div>
         <div class="quiz-meta">
-          <span class="quiz-counter" id="q-counter">Question 1 of 5</span>
+          <span class="quiz-counter" id="q-counter">Question 1 of 15</span>
           <div class="quiz-timer-wrap">
             <svg class="quiz-timer-ring" viewBox="0 0 44 44">
               <circle class="ring-bg" cx="22" cy="22" r="18"/>
@@ -83,7 +83,7 @@
         </svg>
         <div class="quiz-score-text">
           <span id="final-score">0</span>
-          <small>/ 50</small>
+          <small>/ 150</small>
         </div>
       </div>
 
@@ -120,46 +120,11 @@
 </div>
 
 <script>
+  const quizData = <%- JSON.stringify(quizData) %>;
 // ══════════════════════════════════════════════════
 //  QUIZ DATA — replace with DB fetch later
 // ══════════════════════════════════════════════════
-const quizData = [
-  {
-    id: 1, 
-    question: "What does the 'M' in MERN stack stand for?",
-    options: ["MySQL", "MongoDB", "MariaDB", "Microsoft SQL"],
-    correct: 1,
-    explanation: "MERN stands for MongoDB, Express, React, and Node.js — the most popular full-stack JavaScript combination."
-  },
-  {
-    id: 2, 
-    question: "Which algorithm is commonly used for classification tasks in Machine Learning?",
-    options: ["Linear Regression", "K-Means Clustering", "Random Forest", "PCA"],
-    correct: 2,
-    explanation: "Random Forest is a powerful ensemble classification algorithm that builds multiple decision trees and merges them for a more accurate result."
-  },
-  {
-    id: 3, 
-    question: "What is the full form of CNN in Deep Learning?",
-    options: ["Central Neural Network", "Convolutional Neural Network", "Computed Neuron Network", "Clustered Node Network"],
-    correct: 1,
-    explanation: "CNN stands for Convolutional Neural Network — primarily used for image recognition, object detection, and computer vision tasks."
-  },
-  {
-    id: 4, 
-    question: "Which of the following is a NoSQL database?",
-    options: ["PostgreSQL", "MySQL", "MongoDB", "SQLite"],
-    correct: 2,
-    explanation: "MongoDB is a NoSQL document database that stores data in flexible, JSON-like documents instead of tables and rows."
-  },
-  {
-    id: 5, 
-    question: "What does REST stand for in REST API?",
-    options: ["Relational Entity State Transfer", "Representational State Transfer", "Remote Execution State Transfer", "Resource Entity State Transfer"],
-    correct: 1,
-    explanation: "REST stands for Representational State Transfer — an architectural style for designing networked applications using HTTP methods."
-  }
-];
+
 
 // ══════════════════════════════════════════════════
 //  STATE
@@ -328,7 +293,7 @@ function revealAnswer(selected) {
   const expIcon = document.getElementById('exp-icon');
   const expText = document.getElementById('explanation-text');
 
-  expIcon.textContent = selected === q.correct ? '✅' : '❌';
+  expIcon.textContent = selected === q.correct ? '🟢 ' : '🔴';
   expText.textContent = q.explanation;
   expBox.classList.remove('hidden');
   expBox.classList.add('exp-enter');
@@ -364,7 +329,7 @@ function showResult() {
 
   // Score ring animation
   setTimeout(() => {
-    const pct    = score / 50;
+    const pct    = score / 150;
     const offset = CIRCUMFERENCE_LARGE * (1 - pct);
     const ring   = document.getElementById('score-ring');
     ring.style.strokeDasharray  = CIRCUMFERENCE_LARGE;
@@ -390,7 +355,7 @@ function showResult() {
   document.getElementById('time-taken').textContent    = totalTime + 's';
 
   // Dynamic result message
-  const pct = score / 50;
+  const pct = score / 150;
   let emoji, title, sub, badge;
 
   if (pct === 1) {
