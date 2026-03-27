@@ -7,15 +7,15 @@
     <h2 class="login-title"><span class="gold-access">Access</span></h2>
 
     <p class="login-subtitle">
-      Enter your academic details to continue learning.
+Enter your MVJCE name and official college email.
+Ensure both are accurate and valid.
     </p>
 
-    <% if (typeof error !== 'undefined' && error) { %>
-      <div class="login-error">
-        <%= error %>
-      </div>
-    <% } %>
-
+      <% if (error) { %>
+  <div class="error-box">
+    <%= error %>
+  </div>
+<% } %>
     <form action="/login" method="POST">
 
       <div class="input-group">

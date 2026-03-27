@@ -7,6 +7,7 @@ const mongoose   = require('mongoose');
 const axios      = require('axios');
 const nodemailer = require('nodemailer');
 let port = 8080;
+require('dotenv').config();
 
 // ══════════════════════════════════════════════════
 //  ENGINE & VIEWS
@@ -22,6 +23,40 @@ app.set("view options", { root: path.join(__dirname, "views") });
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.post('/chat', async (req, res) => {
+  const { message } = req.body;
+
+  const systemPrompt = `You are Algo, a smart study assistant for Algorium...
+
+STRICT RULES:
+- ONLY answer DS, Web Dev, AI/ML
+- If not → say: "I can only help with Data Structures, Web Development, and AI/ML topics. Please ask something related to your studies!"
+- Keep answers clear and simple`;
+
+  try {
+      const response = await axios.post(
+  `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+  {
+    contents: [
+      {
+        parts: [
+          {
+            text: `${systemPrompt}\n\nQuestion: ${message}`
+          }
+        ]
+      }
+    ]
+  }
+);
+
+    const reply = response.data.candidates[0].content.parts[0].text;
+
+    res.json({ reply });
+  } catch (err) {
+    console.error('Gemini error FULL:', err.response?.data?.error || err.message);
+    res.json({ reply: 'Something went wrong. Please try again.'});
+  }
+});
 app.use(session({
   secret           : 'algorium-secret-key',
   resave           : false,
@@ -128,17 +163,28 @@ app.get('/player', requireLogin, (req, res) => {
 });
 
 app.get('/player/:lessonId', requireLogin, async (req, res) => {
-  const API_KEY     = "AIzaSyBJ1d7QOMG0bDc641nLskI8dfy8OOj3Vb4";
+  const API_KEY = process.env.YOUTUBE_API_KEY;
   const PLAYLIST_ID = "PLaldQ9PzZd9qT0KsKJ7yCq70iFFP3MFJ5";
   try {
     const response = await axios.get(
       "https://www.googleapis.com/youtube/v3/playlistItems",
       { params: { part: "snippet", maxResults: 50, playlistId: PLAYLIST_ID, key: API_KEY } }
     );
-    const videos = response.data.items.map((item, index) => ({
-      id: index.toString(), videoId: item.snippet.resourceId.videoId,
-      title: item.snippet.title, description: item.snippet.description,
-      duration: "", views: "", completed: false, globalIndex: index
+    const items = response.data.items || [];
+
+    if (!items.length) {
+      throw new Error("No videos found or API failed");
+    }
+
+    const videos = items.map((item, index) => ({
+      id: index.toString(),
+      videoId: item.snippet?.resourceId?.videoId || "",
+      title: item.snippet?.title || "No Title",
+      description: item.snippet?.description || "",
+      duration: "",
+      views: "",
+      completed: false,
+      globalIndex: index
     }));
     const currentIndex = parseInt(req.params.lessonId);
     res.render('listings/player.ejs', {
@@ -153,7 +199,7 @@ app.get('/player/:lessonId', requireLogin, async (req, res) => {
       topic: "ai"
     });
   } catch (err) {
-    console.error(err);
+    console.error("YOUTUBE ERROR:", err.response?.data || err.message);
     res.send("Error loading playlist");
   }
 });
@@ -163,17 +209,28 @@ app.get('/player1', requireLogin, (req, res) => {
 });
 
 app.get('/player1/:lessonId', requireLogin, async (req, res) => {
-  const API_KEY     = "AIzaSyBJ1d7QOMG0bDc641nLskI8dfy8OOj3Vb4";
+  const API_KEY = process.env.YOUTUBE_API_KEY;
   const PLAYLIST_ID = "PLu0W_9lII9agq5TrH9XLIKQvv0iaF2X3w";
   try {
     const response = await axios.get(
       "https://www.googleapis.com/youtube/v3/playlistItems",
       { params: { part: "snippet", maxResults: 50, playlistId: PLAYLIST_ID, key: API_KEY } }
     );
-    const videos = response.data.items.map((item, index) => ({
-      id: index.toString(), videoId: item.snippet.resourceId.videoId,
-      title: item.snippet.title, description: item.snippet.description,
-      duration: "", views: "", completed: false, globalIndex: index
+    const items = response.data.items || [];
+
+    if (!items.length) {
+      throw new Error("No videos found or API failed");
+    }
+
+    const videos = items.map((item, index) => ({
+      id: index.toString(),
+      videoId: item.snippet?.resourceId?.videoId || "",
+      title: item.snippet?.title || "No Title",
+      description: item.snippet?.description || "",
+      duration: "",
+      views: "",
+      completed: false,
+      globalIndex: index
     }));
     const currentIndex = parseInt(req.params.lessonId);
     res.render('listings/player.ejs', {
@@ -189,7 +246,7 @@ app.get('/player1/:lessonId', requireLogin, async (req, res) => {
       
     });
   } catch (err) {
-    console.error(err);
+    console.error("YOUTUBE ERROR:", err.response?.data || err.message);
     res.send("Error loading playlist");
   }
 });
@@ -199,17 +256,28 @@ app.get('/player2', requireLogin, (req, res) => {
 });
 
 app.get('/player2/:lessonId', requireLogin, async (req, res) => {
-  const API_KEY     = "AIzaSyBJ1d7QOMG0bDc641nLskI8dfy8OOj3Vb4";
+  const API_KEY = process.env.YOUTUBE_API_KEY;
   const PLAYLIST_ID = "PLVHgQku8Z936EUyyl9WKYkvbJ5lJqTHPx";
   try {
     const response = await axios.get(
       "https://www.googleapis.com/youtube/v3/playlistItems",
       { params: { part: "snippet", maxResults: 50, playlistId: PLAYLIST_ID, key: API_KEY } }
     );
-    const videos = response.data.items.map((item, index) => ({
-      id: index.toString(), videoId: item.snippet.resourceId.videoId,
-      title: item.snippet.title, description: item.snippet.description,
-      duration: "", views: "", completed: false, globalIndex: index
+    const items = response.data.items || [];
+
+    if (!items.length) {
+      throw new Error("No videos found or API failed");
+    }
+
+    const videos = items.map((item, index) => ({
+      id: index.toString(),
+      videoId: item.snippet?.resourceId?.videoId || "",
+      title: item.snippet?.title || "No Title",
+      description: item.snippet?.description || "",
+      duration: "",
+      views: "",
+      completed: false,
+      globalIndex: index
     }));
     const currentIndex = parseInt(req.params.lessonId);
     res.render('listings/player.ejs', {
@@ -224,7 +292,7 @@ app.get('/player2/:lessonId', requireLogin, async (req, res) => {
       topic: "datascience"
     });
   } catch (err) {
-    console.error(err);
+    console.error("YOUTUBE ERROR:", err.response?.data || err.message);
     res.send("Error loading playlist");
   }
 });
