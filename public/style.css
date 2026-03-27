@@ -4958,42 +4958,100 @@ body::after {
 .navbar-left {
   gap: 14px; /* ADD this line */
 }
-/* ── Go Back Button ── */
-/* ── Go Back Button — Premium ── */
-.btn-go-back {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 16px 8px 12px;
-  background: linear-gradient(135deg, rgba(255,69,0,0.08), rgba(255,140,0,0.05));
-  border: 1px solid rgba(255, 100, 20, 0.3);
-  border-radius: 22px;
-  color: #FF6014;
-  font-size: 13px;
+.nav-user-btn {
+  display      : flex;
+  align-items  : center;
+  gap          : 8px;
+  background   : transparent;
+  border       : 1.5px solid rgba(255,100,0,0.25);
+  border-radius: var(--radius-pill);
+  padding      : 6px 14px 6px 6px;
+  cursor       : pointer;
+  transition   : var(--transition-smooth);
+}
+.nav-user-btn:hover {
+  background  : rgba(255,100,0,0.07);
+  border-color: rgba(255,100,0,0.5);
+}
+.nav-user-btn::after { display: none; }
+
+.nav-user-avatar {
+  width        : 30px; height: 30px;
+  border-radius: 50%;
+  background   : var(--algo-gradient);
+  color        : #fff;
+  font-family  : var(--font-display);
+  font-size    : 0.85rem;
+  font-weight  : 800;
+  display      : flex;
+  align-items  : center;
+  justify-content: center;
+  box-shadow   : 0 2px 8px rgba(255,80,0,0.3);
+  flex-shrink  : 0;
+}
+.nav-user-name {
+  font-family: var(--font-display);
+  font-size  : 0.88rem;
   font-weight: 600;
-  letter-spacing: 0.01em;
-  cursor: pointer;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 1px 4px rgba(255, 80, 0, 0.1), inset 0 1px 0 rgba(255,255,255,0.06);
-  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-  white-space: nowrap;
+  color      : #1a1a1a;
 }
-.btn-go-back svg {
-  flex-shrink: 0;
-  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+.nav-user-dropdown {
+  min-width    : 260px !important;
+  border-radius: var(--radius-md) !important;
+  border       : 1.5px solid rgba(255,100,0,0.13) !important;
+  box-shadow   : 0 20px 60px rgba(0,0,0,0.1) !important;
+  padding      : 8px !important;
+  margin-top   : 10px !important;
+  animation    : dropIn 0.22s cubic-bezier(0.4,0,0.2,1) both;
 }
-.btn-go-back:hover {
-  background: linear-gradient(135deg, rgba(255,69,0,0.15), rgba(255,140,0,0.1));
-  border-color: rgba(255, 100, 20, 0.6);
-  color: #FF4500;
-  box-shadow: 0 4px 16px rgba(255, 80, 0, 0.2), inset 0 1px 0 rgba(255,255,255,0.08);
-  transform: translateY(-1px);
+.nav-user-info {
+  display      : flex;
+  align-items  : center;
+  gap          : 12px;
+  padding      : 12px 14px !important;
+  background   : rgba(255,248,243,0.7);
+  border-radius: 10px;
+  margin-bottom: 4px;
+  cursor       : default;
 }
-.btn-go-back:hover svg {
-  transform: translateX(-3px);
+.nui-avatar {
+  width        : 44px; height: 44px;
+  border-radius: 50%;
+  background   : var(--algo-gradient);
+  color        : #fff;
+  font-family  : var(--font-display);
+  font-size    : 1.1rem;
+  font-weight  : 800;
+  display      : flex;
+  align-items  : center;
+  justify-content: center;
+  box-shadow   : 0 4px 12px rgba(255,80,0,0.3);
+  flex-shrink  : 0;
 }
-.btn-go-back:active {
-  transform: translateY(0px);
-  box-shadow: 0 1px 6px rgba(255, 80, 0, 0.15);
+.nui-name {
+  font-family: var(--font-display);
+  font-size  : 0.92rem;
+  font-weight: 700;
+  color      : #1a1a1a;
+  margin     : 0 0 4px;
 }
+.nui-detail {
+  font-family: var(--font-body);
+  font-size  : 0.75rem;
+  color      : #FF5500;
+  font-weight: 600;
+  margin     : 0;
+}
+.nui-divider { border-color: rgba(255,100,0,0.1) !important; margin: 4px 0 !important; }
+.nui-item {
+  font-family  : var(--font-body);
+  font-size    : 0.88rem;
+  font-weight  : 500;
+  color        : #333 !important;
+  border-radius: 8px !important;
+  padding      : 10px 14px !important;
+  transition   : var(--transition-smooth);
+}
+.nui-item:hover { background: rgba(255,100,0,0.07) !important; color: #FF5500 !important; }
+.nui-logout { color: #ef4444 !important; }
+.nui-logout:hover { background: rgba(239,68,68,0.08) !important; color: #ef4444 !important; }

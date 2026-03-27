@@ -44,9 +44,40 @@
         <li class="nav-item">
           <a class="nav-link txt" href="/contact">contact</a>
         </li>
-        <li class="nav-item mvj-login-btn ms-lg-3">
-            <a class="btn btn-outline-success" href="/login">Login</a>
+        <li class="nav-item ms-lg-3">
+  <% if (currentUser) { %>
+    <div class="nav-user-profile dropdown">
+      <button class="nav-user-btn dropdown-toggle"
+              data-bs-toggle="dropdown"
+              aria-expanded="false">
+        <div class="nav-user-avatar">
+          <%= currentUser.name.charAt(0).toUpperCase() %>
+        </div>
+        <span class="nav-user-name"><%= currentUser.name.split(' ')[0] %></span>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end nav-user-dropdown">
+        <li class="nav-user-info">
+          <div class="nui-avatar">
+            <%= currentUser.name.charAt(0).toUpperCase() %>
+          </div>
+          <div>
+            <p class="nui-name"><%= currentUser.name %></p>
+            <p class="nui-detail"><%= currentUser.email %></p>
+          </div>
         </li>
+        <li><hr class="dropdown-divider nui-divider"></li>
+        <li><hr class="dropdown-divider nui-divider"></li>
+        <li>
+          <a class="dropdown-item nui-item nui-logout" href="/logout">
+            <i class="fa-solid fa-right-from-bracket me-2"></i> Logout
+          </a>
+        </li>
+      </ul>
+    </div>
+  <% } else { %>
+    <a class="btn btn-outline-success" href="/login">Login</a>
+  <% } %>
+</li>
       </ul>
     </div>
   </div>

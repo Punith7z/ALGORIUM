@@ -5,7 +5,6 @@ const Quiz = require("../models/quiz");
 router.get("/quiz/:topic", async (req, res) => {
   const topic = req.params.topic;
 
-  console.log("Requested topic:", topic);
 
   const quizData = await Quiz.find({ topic });
 
