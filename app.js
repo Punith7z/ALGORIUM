@@ -6,7 +6,6 @@ const session    = require('express-session');
 const mongoose   = require('mongoose');
 const axios      = require('axios');
 const nodemailer = require('nodemailer');
-let port = 8080;
 require('dotenv').config();
 
 // ══════════════════════════════════════════════════
@@ -300,6 +299,8 @@ app.get('/player2/:lessonId', requireLogin, async (req, res) => {
 // ══════════════════════════════════════════════════
 //  START SERVER
 // ══════════════════════════════════════════════════
-app.listen(port, () => {
-  console.log("Listening to Port 8080");
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
