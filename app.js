@@ -28,8 +28,8 @@ app.post('/chat', async (req, res) => {
   const systemPrompt = `You are Algo, a smart study assistant for Algorium...
 
 STRICT RULES:
-- ONLY answer DS, Web Dev, AI/ML
-- If not → say: "I can only help with Data Structures, Web Development, and AI/ML topics. Please ask something related to your studies!"
+- ONLY answer DS, Web Dev, AI/ML, Engneering , Student life, Motivation, Moral Values, Handling Student Emotions, Technology, Tech Stacks
+- If not → say: "I can't answer in this domain, my domain is restricted"
 - Keep answers clear and simple`;
 
   try {
@@ -96,6 +96,9 @@ app.get("/", async (req, res) => {
 app.get("/ai-intro", async (req, res) => {
   res.render("listings/ai-intro.ejs");
 });
+app.get("/fund-intro", async (req, res) => {
+  res.render("listings/fund-intro.ejs");
+});
 app.get("/webdev-intro", async (req, res) => {
   res.render("listings/webdev-intro.ejs");
 });
@@ -116,6 +119,9 @@ app.get("/explore", async (req, res) => {
 });
 app.get("/privacy", async (req, res) => {
   res.render("listings/privacy.ejs");
+});
+app.get("/practice", async (req, res) => {
+  res.render("listings/practice.ejs");
 });
 
 // ══════════════════════════════════════════════════
@@ -296,6 +302,53 @@ app.get('/player2/:lessonId', requireLogin, async (req, res) => {
   }
 });
 
+
+app.get('/player3', requireLogin, (req, res) => {
+  res.redirect('/player3/0');
+});
+
+app.get('/player3/:lessonId', requireLogin, async (req, res) => {
+  const API_KEY = process.env.YOUTUBE_API_KEY;
+  const PLAYLIST_ID = "PLGjplNEQ1it8-0CmoljS5yeV-GlKSUEt0";
+  try {
+    const response = await axios.get(
+      "https://www.googleapis.com/youtube/v3/playlistItems",
+      { params: { part: "snippet", maxResults: 50, playlistId: PLAYLIST_ID, key: API_KEY } }
+    );
+    const items = response.data.items || [];
+
+    if (!items.length) {
+      throw new Error("No videos found or API failed");
+    }
+
+    const videos = items.map((item, index) => ({
+      id: index.toString(),
+      videoId: item.snippet?.resourceId?.videoId || "",
+      title: item.snippet?.title || "No Title",
+      description: item.snippet?.description || "",
+      duration: "",
+      views: "",
+      completed: false,
+      globalIndex: index
+    }));
+    const currentIndex = parseInt(req.params.lessonId);
+    res.render('listings/player.ejs', {
+      course        : { id: "3", instructor: "shradha-khapra", instructorAvatar: "/images/fund-logo.png" },
+      currentVideo  : { ...videos[currentIndex], index: currentIndex },
+      prevVideo     : currentIndex > 0 ? videos[currentIndex - 1] : null,
+      nextVideo     : currentIndex < videos.length - 1 ? videos[currentIndex + 1] : null,
+      sections      : [{ id: "1", title: "Playlist", totalDuration: "", videos }],
+      completedCount: 0, totalCount: videos.length,
+      progressPercent: Math.floor((currentIndex / videos.length) * 100),
+      activeSectionIndex: 0,
+      topic: "fundamentals"
+      
+    });
+  } catch (err) {
+    console.error("YOUTUBE ERROR:", err.response?.data || err.message);
+    res.send("Error loading playlist");
+  }
+});
 // ══════════════════════════════════════════════════
 //  START SERVER
 // ══════════════════════════════════════════════════

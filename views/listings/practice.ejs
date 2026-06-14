@@ -1,0 +1,258 @@
+<% layout('layouts/boilerplate') %>
+
+<div class="container-fluid px-lg-5 mt-4 mb-5">
+  <div class="practice-wrapper">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center pb-4 mb-4 border-bottom" style="border-color: rgba(255,100,20,0.2) !important;">
+      <h2 class="practice-title fs-3 mb-3 mb-md-0"><i class="fa-solid fa-code me-2"></i> ALGO Practice</h2>
+      <div class="editor-actions d-flex flex-wrap gap-2 gap-md-3 mt-3 mt-md-0">
+         <button id="clearBtn" class="btn clear-btn flex-fill px-md-4"><i class="fa-solid fa-eraser me-1"></i> Clear</button>
+         <button id="runBtn" class="btn run-btn flex-fill px-md-4" disabled><i class="fa-solid fa-spinner fa-spin me-1"></i> Loading...</button>
+      </div>
+    </div>
+
+  <div class="editor-workspace">
+     <div id="monaco-editor-container"></div>
+     
+     <div class="io-panel">
+        <div class="input-panel">
+            <label><i class="fa-solid fa-keyboard"></i> Standard Input (stdin)</label>
+            <textarea id="stdin-textarea" placeholder="Enter your inputs here... (each line is read by a single input() call)"></textarea>
+        </div>
+        <div class="output-panel">
+            <label><i class="fa-solid fa-terminal"></i> Console Output</label>
+            <pre id="stdout-pre">Initializing Python environment...</pre>
+        </div>
+     </div>
+  </div>
+</div>
+</div>
+
+<style>
+/* Algorium Vibe Styling */
+.practice-wrapper {
+    background: #0f0f0f;
+    border-radius: 16px;
+    padding: 15px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255, 100, 20, 0.15);
+    color: #fff;
+    margin-bottom: 40px;
+}
+.practice-title {
+    color: #FF8C00;
+    margin: 0;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.editor-actions {
+    display: flex;
+    gap: 12px;
+}
+.run-btn {
+    background: linear-gradient(135deg, #FF4500, #FF8C00);
+    color: white;
+    font-weight: 600;
+    border: none;
+    transition: transform 0.2s;
+}
+.run-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 80, 0, 0.4);
+    color: white;
+}
+.run-btn:disabled {
+    opacity: 0.7;
+}
+.clear-btn {
+    background: rgba(255,255,255,0.1);
+    color: #ccc;
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: all 0.2s;
+}
+.clear-btn:hover {
+    background: rgba(255,255,255,0.2);
+    color: white;
+}
+.editor-workspace {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+@media (min-width: 768px) {
+    .practice-wrapper {
+        padding: 30px;
+    }
+}
+@media (min-width: 992px) {
+    .editor-workspace {
+        flex-direction: row;
+        height: 70vh;
+        min-height: 600px;
+    }
+}
+#monaco-editor-container {
+    flex: 6;
+    border: 1px solid rgba(255, 100, 20, 0.25);
+    border-radius: 8px;
+    overflow: hidden;
+    min-height: 300px;
+}
+.io-panel {
+    flex: 4;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.input-panel, .output-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgba(255, 100, 20, 0.25);
+    border-radius: 8px;
+    background: #161616;
+    padding: 12px;
+    min-height: 200px;
+}
+.input-panel label, .output-panel label {
+    font-weight: bold;
+    color: #FF6014;
+    margin-bottom: 10px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+#stdin-textarea {
+    flex: 1;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 6px;
+    color: #ddd;
+    outline: none;
+    resize: none;
+    font-family: monospace;
+    padding: 10px;
+}
+#stdin-textarea:focus {
+    border-color: rgba(255, 100, 20, 0.5);
+}
+#stdout-pre {
+    flex: 1;
+    background: #0a0a0a;
+    border-radius: 6px;
+    padding: 10px;
+    color: #ddd;
+    overflow-y: auto;
+    font-family: monospace;
+    white-space: pre-wrap;
+    margin: 0;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
+<script>
+// --- Pyodide Integration ---
+let pyodideReadyPromise;
+let pyodideInstance;
+
+async function initPyodide() {
+    try {
+        pyodideInstance = await loadPyodide({
+            indexURL: "https://cdn.jsdelivr.net/pyodide/v0.25.0/full/"
+        });
+        
+        // Mock stdin and stdout inside Python
+        await pyodideInstance.runPythonAsync(`
+import builtins
+import sys
+
+_input_buffer = []
+
+def _custom_input(prompt=''):
+    if prompt:
+        print(prompt, end='')
+    if _input_buffer:
+        return _input_buffer.pop(0)
+    raise EOFError("EOF when reading a line")
+
+builtins.input = _custom_input
+
+class CustomStdout:
+    def write(self, text):
+        import js
+        js.appendOutput(text)
+    def flush(self):
+        pass
+
+sys.stdout = CustomStdout()
+sys.stderr = CustomStdout()
+        `);
+        
+        document.getElementById('stdout-pre').innerText = "Engine ready! Write your python code and click Run.\\n";
+        const btn = document.getElementById('runBtn');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-play"></i> Run';
+    } catch(err) {
+        document.getElementById('stdout-pre').innerText = "Error loading Pyodide: " + err.message;
+    }
+}
+
+window.appendOutput = function(text) {
+    const out = document.getElementById('stdout-pre');
+    out.innerText += text;
+};
+
+// --- Monaco Editor Integration ---
+require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs' }});
+require(['vs/editor/editor.main'], function() {
+    window.editor = monaco.editor.create(document.getElementById('monaco-editor-container'), {
+        value: "# Welcome to Algorium Practice!\\n\\nname = input('What is your name? ')\\nprint(f'Hello, {name}! Let\\'s learn together.')",
+        language: 'python',
+        theme: 'vs-dark',
+        automaticLayout: true,
+        minimap: { enabled: false },
+        fontSize: 14
+    });
+});
+
+// --- Actions ---
+document.getElementById('runBtn').addEventListener('click', async () => {
+    if (!pyodideInstance) return;
+    
+    const code = window.editor.getValue();
+    const inputData = document.getElementById('stdin-textarea').value;
+    
+    document.getElementById('stdout-pre').innerText = "";
+    const runBtn = document.getElementById('runBtn');
+    runBtn.disabled = true;
+    runBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Running...';
+    
+    try {
+        const inputArray = inputData ? inputData.split('\\n') : [];
+        pyodideInstance.globals.set('_input_buffer_js', inputArray);
+        await pyodideInstance.runPythonAsync(`
+import builtins
+_input_buffer.clear()
+_input_buffer.extend(_input_buffer_js.to_py())
+        `);
+        
+        await pyodideInstance.runPythonAsync(code);
+    } catch (err) {
+        window.appendOutput("\\n" + err.toString());
+    }
+    
+    runBtn.disabled = false;
+    runBtn.innerHTML = '<i class="fa-solid fa-play"></i> Run';
+});
+
+document.getElementById('clearBtn').addEventListener('click', () => {
+    document.getElementById('stdout-pre').innerText = "";
+});
+
+// Start Pyodide Download
+pyodideReadyPromise = initPyodide();
+</script>

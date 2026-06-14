@@ -322,7 +322,222 @@ question: "Which protocol is stateless?",
 options: ["HTTP", "FTP", "SMTP", "TCP"],
 correct: 0,
 explanation: "HTTP is stateless by design."
+},
+
+
+
+{
+topic: "fundamentals",
+question: "What is the output of type(3.14) in Python?",
+options: ["<class 'int'>", "<class 'float'>", "<class 'double'>", "<class 'str'>"],
+correct: 1,
+explanation: "3.14 is a floating point number, so type() returns <class 'float'>."
+},
+{
+topic: "fundamentals",
+question: "Which keyword is used to define a function in Python?",
+options: ["func", "function", "def", "define"],
+correct: 2,
+explanation: "The 'def' keyword is used to declare a function in Python."
+},
+{
+topic: "fundamentals",
+question: "What will print(10 // 3) output?",
+options: ["3.33", "3", "4", "1"],
+correct: 1,
+explanation: "// is floor division and returns the integer quotient."
+},
+{
+topic: "fundamentals",
+question: "Which of the following is a mutable data type in Python?",
+options: ["tuple", "str", "int", "list"],
+correct: 3,
+explanation: "Lists are mutable — their contents can be changed after creation."
+},
+{
+topic: "fundamentals",
+question: "What does the len() function return for the string 'hello'?",
+options: ["4", "5", "6", "Error"],
+correct: 1,
+explanation: "len('hello') returns 5, the number of characters in the string."
+},
+{
+topic: "fundamentals",
+question: "What is the correct way to create an empty dictionary?",
+options: ["dict = []", "dict = ()", "dict = {}", "dict = set()"],
+correct: 2,
+explanation: "{} creates an empty dictionary in Python."
+},
+{
+topic: "fundamentals",
+question: "Which loop is best when the number of iterations is known?",
+options: ["while loop", "for loop", "do-while loop", "recursion"],
+correct: 1,
+explanation: "A for loop is ideal when the number of iterations is predetermined."
+},
+{
+topic: "fundamentals",
+question: "What does the 'break' statement do inside a loop?",
+options: ["Skips the current iteration", "Restarts the loop", "Exits the loop entirely", "Pauses execution"],
+correct: 2,
+explanation: "break immediately terminates the loop and transfers control outside it."
+},
+{
+topic: "fundamentals",
+question: "What is the output of bool(0)?",
+options: ["True", "False", "0", "Error"],
+correct: 1,
+explanation: "0 is falsy in Python, so bool(0) evaluates to False."
+},
+{
+topic: "fundamentals",
+question: "Which operator is used for exponentiation in Python?",
+options: ["^", "**", "exp()", "//"],
+correct: 1,
+explanation: "** is the exponentiation operator. 2**3 gives 8."
+},
+{
+topic: "fundamentals",
+question: "What is the index of the last element in a list of 5 items?",
+options: ["5", "4", "-1 only", "0"],
+correct: 1,
+explanation: "Indexing starts at 0, so the last element of 5 items is at index 4."
+},
+{
+topic: "fundamentals",
+question: "What does 'continue' do inside a loop?",
+options: ["Breaks the loop", "Skips the rest of the current iteration", "Restarts the program", "Returns a value"],
+correct: 1,
+explanation: "continue skips the remaining code in the current iteration and moves to the next."
+},
+{
+topic: "fundamentals",
+question: "Which of these is the correct way to write a single-line comment in Python?",
+options: ["// comment", "/* comment */", "# comment", "-- comment"],
+correct: 2,
+explanation: "Python uses # for single-line comments."
+},
+{
+topic: "fundamentals",
+question: "What does the 'return' statement do in a function?",
+options: ["Prints a value", "Exits the program", "Sends a value back to the caller", "Loops back"],
+correct: 2,
+explanation: "return sends the specified value back to wherever the function was called."
+},
+{
+topic: "fundamentals",
+question: "What is a tuple in Python?",
+options: ["Mutable ordered collection", "Immutable ordered collection", "Key-value store", "Unordered unique set"],
+correct: 1,
+explanation: "Tuples are immutable, meaning their values cannot be changed after creation."
+},
+{
+topic: "fundamentals",
+question: "How do you open a file for reading in Python?",
+options: ["open('file.txt', 'w')", "open('file.txt', 'r')", "open('file.txt', 'a')", "read('file.txt')"],
+correct: 1,
+explanation: "'r' mode opens a file for reading. It is also the default mode."
+},
+{
+topic: "fundamentals",
+question: "Which built-in function converts a string to an integer?",
+options: ["str()", "float()", "int()", "num()"],
+correct: 2,
+explanation: "int() converts a valid string or float to an integer."
+},
+{
+topic: "fundamentals",
+question: "What is the output of list(range(3))?",
+options: ["[1, 2, 3]", "[0, 1, 2]", "[0, 1, 2, 3]", "[1, 2]"],
+correct: 1,
+explanation: "range(3) generates 0, 1, 2 — it stops before the given number."
+},
+{
+topic: "fundamentals",
+question: "Which keyword is used to handle exceptions in Python?",
+options: ["catch", "handle", "except", "error"],
+correct: 2,
+explanation: "Python uses try-except blocks to handle exceptions."
+},
+{
+topic: "fundamentals",
+question: "What does OOP stand for?",
+options: ["Object Oriented Programming", "Open Origin Protocol", "Optional Output Process", "None"],
+correct: 0,
+explanation: "OOP stands for Object Oriented Programming — a paradigm based on objects and classes."
+},
+{
+topic: "fundamentals",
+question: "Which keyword creates a class in Python?",
+options: ["object", "define", "class", "new"],
+correct: 2,
+explanation: "The 'class' keyword is used to define a class in Python."
+},
+{
+topic: "fundamentals",
+question: "What is the purpose of __init__ in a class?",
+options: ["Destroy the object", "Initialize object attributes", "Define class methods", "Import modules"],
+correct: 1,
+explanation: "__init__ is the constructor method called when an object is created."
+},
+{
+topic: "fundamentals",
+question: "Which concept allows a child class to inherit properties from a parent class?",
+options: ["Encapsulation", "Polymorphism", "Inheritance", "Abstraction"],
+correct: 2,
+explanation: "Inheritance lets a subclass reuse and extend the behavior of a parent class."
+},
+{
+topic: "fundamentals",
+question: "What is a dictionary key-value pair accessed with?",
+options: ["Index", "Key", "Pointer", "Offset"],
+correct: 1,
+explanation: "Dictionary values are accessed using their associated keys."
+},
+{
+topic: "fundamentals",
+question: "Which of the following will raise a ZeroDivisionError?",
+options: ["10 / 2", "10 % 3", "10 // 0", "10 ** 0"],
+correct: 2,
+explanation: "Dividing by zero with // raises a ZeroDivisionError in Python."
+},
+{
+topic: "fundamentals",
+question: "What does the 'pass' statement do?",
+options: ["Skips the function", "Acts as a placeholder and does nothing", "Exits the loop", "Returns None"],
+correct: 1,
+explanation: "pass is a null operation used as a placeholder where code is syntactically required."
+},
+{
+topic: "fundamentals",
+question: "Which method adds an element to the end of a list?",
+options: ["add()", "insert()", "append()", "push()"],
+correct: 2,
+explanation: "append() adds a single element to the end of a list."
+},
+{
+topic: "fundamentals",
+question: "What is the result of 'Hello' + ' ' + 'World'?",
+options: ["HelloWorld", "Hello World", "Error", "'Hello' 'World'"],
+correct: 1,
+explanation: "The + operator concatenates strings in Python."
+},
+{
+topic: "fundamentals",
+question: "Which of the following checks if a key exists in a dictionary?",
+options: ["key in dict", "dict.has(key)", "dict.exists(key)", "find(key, dict)"],
+correct: 0,
+explanation: "The 'in' operator checks for key membership in a dictionary."
+},
+{
+topic: "fundamentals",
+question: "What is recursion?",
+options: ["A loop", "A function calling itself", "An import statement", "A class method"],
+correct: 1,
+explanation: "Recursion is when a function calls itself to solve a smaller subproblem."
 }
+
+
 
 ];
 
